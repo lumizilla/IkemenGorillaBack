@@ -47,24 +47,10 @@ def post_something():
             "ERROR": "no string found, please send a string."
         })
 
-#-------------------------------------------------------------
-
-# A welcome message to test our server
-@app.route('/')
-def index():
-    return "<h1>Welcome to our server !!</h1>"
-
-if __name__ == '__main__':
-    # Threaded option to enable multiple instances for multiple user access support
-    app.run(threaded=True, port=5000)
-
-
-#-------------------------------------------------------------
-
-#API ROUTES
+#DATABASE ACCESS EXAMPLE
 
 @app.route('/testdatabase/', methods=['GET'])
-def respondtest():
+def testdatabase():
     cur = get_db().execute("SELECT * FROM User;")
     userinfo = cur.fetchall()
     cur.close()
@@ -80,6 +66,22 @@ def respondtest():
 
     # Return the response in json format
     return jsonify(response)
+    
+#-------------------------------------------------------------
+
+# A welcome message to test our server
+@app.route('/')
+def index():
+    return "<h1>Welcome to our server !!</h1>"
+
+if __name__ == '__main__':
+    # Threaded option to enable multiple instances for multiple user access support
+    app.run(threaded=True, port=5000)
+
+
+#-------------------------------------------------------------
+
+#API ROUTES
 
 @app.route('/contests/', methods=['GET'])
 def contests():
@@ -117,6 +119,7 @@ def getContest(contest_id):
 
 
     return jsonify(response)
+
 #-------------------------------------------------------------
 
 #DATABASE ACCESS CODE
