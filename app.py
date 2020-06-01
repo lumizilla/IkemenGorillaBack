@@ -91,8 +91,9 @@ def contests():
     response = {}
 
     #CODE
-    if (status[0] and page[0]):
+    #if (status[0] and page[0]):
         #do code for it
+
 
 
     return jsonify(response)
