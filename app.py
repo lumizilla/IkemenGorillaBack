@@ -52,9 +52,28 @@ if __name__ == '__main__':
     app.run(threaded=True, port=5000)
 
 
+@app.route('/testdatabase/', methods=['GET'])
+def respond():
+    # Retrieve the name from url parameter
+    cur = get_db().execute("SELECT * FROM User;")
+    userinfo = cur.fetchall()
+    cur.close()
+
+    response = {}
+
+    # Check if user sent a name at all
+    if not userinfo[0]:
+        response["ERROR"] = "test database, found 0 users"
+    # Now the user entered a valid name
+    else:
+        response["MESSAGE"] = f"The server found: {userinfo[0]}"
+
+    # Return the response in json format
+    return jsonify(response)
 #DATABASE ACCESS CODE
 
-DATABASE = '/Users/luizaculau/Documents/TestLumi/testlumi.db'
+#DATABASE = '/Users/luizaculau/Documents/IkemenGorilla/IkemenGorillaBack/ikemengori.db'
+DATABASE = 'ikemengori.db'
 
 def get_db():
     db = getattr(g, '_database', None)
@@ -67,6 +86,4 @@ def close_connection(exception):
     db = getattr(g, '_database', None)
     if db is not None:
         db.close()
-
-
 
