@@ -6,6 +6,8 @@ import sqlite3
 
 app = Flask(__name__)
 
+#EXAMPLE OF GET
+
 @app.route('/getecho/', methods=['GET'])
 def respond():
     # Retrieve the name from url parameter
@@ -26,6 +28,9 @@ def respond():
     # Return the response in json format
     return jsonify(response)
 
+
+#EXAMPLE OF POST
+
 @app.route('/postecho/', methods=['POST'])
 def post_something():
     param = request.form.get('echo')
@@ -42,6 +47,8 @@ def post_something():
             "ERROR": "no string found, please send a string."
         })
 
+#-------------------------------------------------------------
+
 # A welcome message to test our server
 @app.route('/')
 def index():
@@ -52,9 +59,12 @@ if __name__ == '__main__':
     app.run(threaded=True, port=5000)
 
 
+#-------------------------------------------------------------
+
+#API ROUTES
+
 @app.route('/testdatabase/', methods=['GET'])
 def respondtest():
-    # Retrieve the name from url parameter
     cur = get_db().execute("SELECT * FROM User;")
     userinfo = cur.fetchall()
     cur.close()
@@ -71,9 +81,45 @@ def respondtest():
     # Return the response in json format
     return jsonify(response)
 
+@app.route('/contests/', methods=['GET'])
+def contests():
+
+    # Retrieve url parameters
+    status = request.args.get("status", None)
+    page = request.args.get("page", None)
+
+    response = {}
+
+    #CODE
+    if (status[0] and page[0]):
+        #do code for it
+
+
+    return jsonify(response)
+
+@app.route('/zoos/recommended/', methods=['GET'])
+def zoosRecommended():
+
+    response = {}
+
+    #CODE
+
+    return jsonify(response)
+
+@app.route('/contests/<int:contest_id>', methods=['GET'])
+def getContest(contest_id):
+
+    #CODE
+
+    response = {}
+    response["MESSAGE"] = f"The server found: {contest_id}"
+
+
+    return jsonify(response)
+#-------------------------------------------------------------
+
 #DATABASE ACCESS CODE
 
-#DATABASE = '/Users/luizaculau/Documents/IkemenGorilla/IkemenGorillaBack/ikemengori.db'
 DATABASE = 'ikemengori.db'
 
 def get_db():
