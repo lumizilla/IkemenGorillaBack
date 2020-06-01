@@ -59,7 +59,7 @@ def respond():
     #userinfo = cur.fetchall()
     #cur.close()
 
-    #response = {}
+    response = {}
 
     response["MESSAGE"] = "blabla"
     # Check if user sent a name at all
