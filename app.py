@@ -55,19 +55,18 @@ if __name__ == '__main__':
 @app.route('/testdatabase/', methods=['GET'])
 def respondtest():
     # Retrieve the name from url parameter
-    #cur = get_db().execute("SELECT * FROM User;")
-    #userinfo = cur.fetchall()
-    #cur.close()
+    cur = get_db().execute("SELECT * FROM User;")
+    userinfo = cur.fetchall()
+    cur.close()
 
     response = {}
 
-    response["MESSAGE"] = "blabla"
     # Check if user sent a name at all
-    #if not userinfo[0]:
-    #    response["ERROR"] = "test database, found 0 users"
+    if not userinfo[0]:
+        response["ERROR"] = "test database, found 0 users"
     # Now the user entered a valid name
-    #else:
-    #    response["MESSAGE"] = f"The server found: {userinfo[0]}"
+    else:
+        response["MESSAGE"] = f"The server found: {userinfo[0]}"
 
     # Return the response in json format
     return jsonify(response)
