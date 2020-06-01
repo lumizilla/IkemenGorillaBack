@@ -53,7 +53,7 @@ if __name__ == '__main__':
 
 
 @app.route('/testdatabase/', methods=['GET'])
-def respond():
+def respondtest():
     # Retrieve the name from url parameter
     #cur = get_db().execute("SELECT * FROM User;")
     #userinfo = cur.fetchall()
