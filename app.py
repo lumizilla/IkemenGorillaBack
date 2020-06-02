@@ -90,15 +90,13 @@ def contests():
     status = request.args.get("status", None)
     page = request.args.get("page", None)
 
-    cur = get_db().execute("SELECT * FROM contest LIMIT 8;")
+    cur = get_db().execute("SELECT * FROM Contest LIMIT 8;")
     contestinfo = cur.fetchall()
+
     cur.close()
 
     response = {}
-
-    #CODE
-    #if (status[0] and page[0]):
-        #do code for it
+    response["MESSAGE"] = "this is where you have to save the server answer"
 
     if not contestinfo[0]:
         response["ERROR"] = "test database, found 0 contests"
