@@ -91,7 +91,7 @@ def contests():
     page = request.args.get("page", None)
 
     cur = get_db().execute("SELECT * FROM contest LIMIT 8;")
-    userinfo = cur.fetchall()
+    contestinfo = cur.fetchall()
     cur.close()
 
     response = {}
@@ -100,9 +100,12 @@ def contests():
     #if (status[0] and page[0]):
         #do code for it
 
-
+    if not contestinfo[0]:
+        response["ERROR"] = "test database, found 0 contests"
 
     return jsonify(response)
+
+    
 
 @app.route('/zoos/recommended/', methods=['GET'])
 def zoosRecommended():
