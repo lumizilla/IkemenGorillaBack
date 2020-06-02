@@ -90,6 +90,10 @@ def contests():
     status = request.args.get("status", None)
     page = request.args.get("page", None)
 
+    cur = get_db().execute("SELECT * FROM contest LIMIT 8;")
+    userinfo = cur.fetchall()
+    cur.close()
+
     response = {}
 
     #CODE
