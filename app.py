@@ -98,8 +98,8 @@ def contests():
     response = {}
     response["MESSAGE"] = "this is where you have to save the server answer"
 
-    #if not contestinfo[0]:
-    #    response["ERROR"] = "test database, found 0 contests"
+    if not contestinfo[0]:
+        response["ERROR"] = "test database, found 0 contests"
 
     return jsonify(response)
 
