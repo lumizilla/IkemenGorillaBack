@@ -96,7 +96,7 @@ def contests():
     cur.close()
 
     response = {}
-    response["MESSAGE_"] = "this is where you have to save the server answer"
+    response["MESSAGE"] = "this is where you have to save the server answer"
 
     if not contestinfo[0]:
         response["ERROR"] = "test database, found 0 contests"
