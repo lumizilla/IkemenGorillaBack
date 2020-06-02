@@ -90,10 +90,10 @@ def contests():
     status = request.args.get("status", None)
     page = request.args.get("page", None)
 
-    #cur = get_db().execute("SELECT * FROM Contest LIMIT 8;")
-    #contestinfo = cur.fetchall()
+    cur = get_db().execute("SELECT * FROM Contest;")
+    contestinfo = cur.fetchall()
 
-    #cur.close()
+    cur.close()
 
     response = {}
     response["MESSAGE"] = "this is where you have to save the server answer"
