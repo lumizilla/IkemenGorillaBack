@@ -145,7 +145,7 @@ def get_db():
         return dict((cursor.description[idx][0], value)
             for idx, value in enumerate(row))
 
-    #db.row_factory = make_dicts
+    db.row_factory = make_dicts
 
     if db is None:
         db = g._database = sqlite3.connect(DATABASE)
