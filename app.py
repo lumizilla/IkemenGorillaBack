@@ -84,7 +84,7 @@ if __name__ == '__main__':
 #API ROUTES
 
 
-"""
+
 @app.route('/contests/', methods=['GET'])
 def contests():
 
@@ -104,7 +104,7 @@ def contests():
     #    response["ERROR"] = "test database, found 0 contests"
 
     return jsonify(response)
-"""
+
     
 
 @app.route('/zoos/recommended/', methods=['GET'])
