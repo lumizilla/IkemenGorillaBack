@@ -117,7 +117,7 @@ def zoosRecommended():
 
     response = {}
 
-    response["MESSAGE"] = zoos[0];
+    response["MESSAGE"] = zoos;
 
     return jsonify(response)
 
