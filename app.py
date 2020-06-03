@@ -119,7 +119,8 @@ def zoosRecommended():
 
     response = zoos[0];
     print(zoos[0])
-    return jsonify(response)
+    #return jsonify(response)
+    return response
 
 @app.route('/contests/<int:contest_id>', methods=['GET'])
 def getContest(contest_id):
