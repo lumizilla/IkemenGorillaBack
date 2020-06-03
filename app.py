@@ -134,7 +134,7 @@ def getContest(contest_id):
 
     response = []
 
-    cur = get_db().execute("SELECT * FROM Contest WHERE id = contest_id;")
+    cur = get_db().execute("SELECT * FROM Contest WHERE id = " + contest_id + ";")
     columns = [column[0] for column in cur.description]
     for row in cur.fetchall():
         response.append(dict(zip(columns, row)))
