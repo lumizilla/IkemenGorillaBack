@@ -83,6 +83,8 @@ if __name__ == '__main__':
 
 #API ROUTES
 
+
+"""
 @app.route('/contests/', methods=['GET'])
 def contests():
 
@@ -102,15 +104,20 @@ def contests():
     #    response["ERROR"] = "test database, found 0 contests"
 
     return jsonify(response)
-
+"""
     
 
 @app.route('/zoos/recommended/', methods=['GET'])
 def zoosRecommended():
 
+    #Getting random 8 zoos in a optimized manner
+    cur = get_db().execute("SELECT * FROM Zoo WHERE ID IN (SELECT ID FROM Zoo ORDER BY RANDOM() LIMIT 8);")
+    zoos = cur.fetchall()
+    cur.close()
+
     response = {}
 
-    #CODE
+    response["MESSAGE"] = zoos[0];
 
     return jsonify(response)
 
