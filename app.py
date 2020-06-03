@@ -114,14 +114,13 @@ def zoosRecommended():
     #Getting random 8 zoos in a optimized manner
     cur = get_db().execute("SELECT * FROM Zoo WHERE ID IN (SELECT ID FROM Zoo ORDER BY RANDOM() LIMIT 8);")
     columns = [column[0] for column in cur.description]
-    
+
     for row in cur.fetchall():
         response.append(dict(zip(columns, row)))
     
     cur.close()
 
-    #return jsonify(response)
-    return response
+    return jsonify(response)
 
 @app.route('/contests/<int:contest_id>', methods=['GET'])
 def getContest(contest_id):
