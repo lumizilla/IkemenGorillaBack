@@ -115,7 +115,8 @@ def zoosRecommended():
     cur = get_db().execute("SELECT * FROM Zoo WHERE ID IN (SELECT ID FROM Zoo ORDER BY RANDOM() LIMIT 8);")
 
     for row in cur.fetchall():
-...     response.append(dict(zip(columns, row)))
+        response.append(dict(zip(columns, row)))
+    
     cur.close()
 
     #return jsonify(response)
