@@ -111,9 +111,9 @@ def contests():
 def zoosRecommended():
 
     #Getting random 8 zoos in a optimized manner
-    #cur = get_db().execute("SELECT * FROM Zoo WHERE ID IN (SELECT ID FROM Zoo ORDER BY RANDOM() LIMIT 8);")
-    #zoos = cur.fetchall()
-    #cur.close()
+    cur = get_db().execute("SELECT * FROM Zoo WHERE ID IN (SELECT ID FROM Zoo ORDER BY RANDOM() LIMIT 8);")
+    zoos = cur.fetchall()
+    cur.close()
 
     response = {}
 
