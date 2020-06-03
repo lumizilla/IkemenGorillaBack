@@ -134,14 +134,16 @@ def getContest(contest_id):
 
     response = []
 
+    '''
     cur = get_db().execute("SELECT * FROM Contest WHERE id = " + contest_id + ";")
     columns = [column[0] for column in cur.description]
     for row in cur.fetchall():
         response.append(dict(zip(columns, row)))
     cur.close()
+    '''
 
-    #response["MESSAGE"] = "this is where you have to save the server answer"
-    #if not contestinfo[0]:
+    response["MESSAGE"] = "this is where you have to save the server answer"
+    if not contestinfo[0]:
     #    response["ERROR"] = "test database, found 0 contests"
 
     return jsonify(response)
