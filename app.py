@@ -1,6 +1,7 @@
 # app.py
 from flask import Flask, request, jsonify, g
 import sqlite3
+import json
 
 #BASIC APP CODE
 
@@ -120,7 +121,7 @@ def zoosRecommended():
     response = zoos[0];
     print(zoos[0])
     #return jsonify(response)
-    return response
+    return json.dumps(response)
 
 @app.route('/contests/<int:contest_id>', methods=['GET'])
 def getContest(contest_id):
