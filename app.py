@@ -92,14 +92,15 @@ def contests():
     status = request.args.get("status", None)
     page = request.args.get("page", None)
 
+    response = []
+
     cur = get_db().execute("SELECT * FROM Contest LIMIT 8;")
-    contestinfo = cur.fetchall()
-
+    columns = [column[0] for column in cur.description]
+    for row in cur.fetchall():
+        response.append(dict(zip(columns, row)))
     cur.close()
-
-    response = {}
-    response["MESSAGE"] = "this is where you have to save the server answer"
-
+    
+    #response["MESSAGE"] = "this is where you have to save the server answer"
     #if not contestinfo[0]:
     #    response["ERROR"] = "test database, found 0 contests"
 
@@ -131,18 +132,44 @@ def getContest(contest_id):
     status = request.args.get("status", None)
     page = request.args.get("page", None)
 
-    cur = get_db().execute("SELECT * FROM Contest WHERE id = contest_id;")
-    contestinfo = cur.fetchall()
+    response = []
 
+    cur = get_db().execute("SELECT * FROM Contest WHERE id = contest_id;")
+    columns = [column[0] for column in cur.description]
+    for row in cur.fetchall():
+        response.append(dict(zip(columns, row)))
     cur.close()
 
-    response = {}
-    response["MESSAGE"] = "this is where you have to save the server answer"
+    #response["MESSAGE"] = "this is where you have to save the server answer"
+    #if not contestinfo[0]:
+    #    response["ERROR"] = "test database, found 0 contests"
+
+    return jsonify(response)
+
+
+@app.route('/contests/<int:contest_id>/sponsors', methods=['GET'])
+def getSponsor(contest_id):
+
+    # Retrieve url parameters
+    status = request.args.get("status", None)
+    page = request.args.get("page", None)
+
+    response = []
+
+    cur = get_db().execute("SELECT * FROM Sponsor WHERE id = contest_id;")
+    columns = [column[0] for column in cur.description]
+    for row in cur.fetchall():
+        response.append(dict(zip(columns, row)))
+    cur.close()
+
+    #response["MESSAGE"] = "this is where you have to save the server answer"
 
     #if not contestinfo[0]:
     #    response["ERROR"] = "test database, found 0 contests"
 
     return jsonify(response)
+
+
 
 #-------------------------------------------------------------
 
