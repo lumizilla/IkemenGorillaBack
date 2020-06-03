@@ -111,13 +111,13 @@ def contests():
 def zoosRecommended():
 
     #Getting random 8 zoos in a optimized manner
-    cur = get_db().execute("SELECT * FROM Zoo WHERE ID IN (SELECT ID FROM Zoo ORDER BY RANDOM() LIMIT 8);")
-    zoos = cur.fetchall()
-    cur.close()
+    #cur = get_db().execute("SELECT * FROM Zoo WHERE ID IN (SELECT ID FROM Zoo ORDER BY RANDOM() LIMIT 8);")
+    #zoos = cur.fetchall()
+    #cur.close()
 
     response = {}
 
-    response = zoos;
+    #response = zoos;
 
     return jsonify(response)
 
@@ -145,7 +145,7 @@ def get_db():
         return dict((cursor.description[idx][0], value)
             for idx, value in enumerate(row))
 
-    db.row_factory = make_dicts
+    #db.row_factory = make_dicts
 
     if db is None:
         db = g._database = sqlite3.connect(DATABASE)
