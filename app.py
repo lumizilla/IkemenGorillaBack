@@ -122,14 +122,25 @@ def zoosRecommended():
 
     return jsonify(response)
 
+
+
 @app.route('/contests/<int:contest_id>', methods=['GET'])
 def getContest(contest_id):
 
-    #CODE
+    # Retrieve url parameters
+    status = request.args.get("status", None)
+    page = request.args.get("page", None)
+
+    cur = get_db().execute("SELECT * FROM Contest WHERE id = contest_id;")
+    contestinfo = cur.fetchall()
+
+    cur.close()
 
     response = {}
-    response["MESSAGE"] = f"The server found: {contest_id}"
+    response["MESSAGE"] = "this is where you have to save the server answer"
 
+    #if not contestinfo[0]:
+    #    response["ERROR"] = "test database, found 0 contests"
 
     return jsonify(response)
 
