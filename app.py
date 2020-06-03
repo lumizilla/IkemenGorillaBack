@@ -1,7 +1,6 @@
 # app.py
 from flask import Flask, request, jsonify, g
 import sqlite3
-import json
 
 #BASIC APP CODE
 
@@ -110,18 +109,17 @@ def contests():
 
 @app.route('/zoos/recommended/', methods=['GET'])
 def zoosRecommended():
+    response = []
 
     #Getting random 8 zoos in a optimized manner
     cur = get_db().execute("SELECT * FROM Zoo WHERE ID IN (SELECT ID FROM Zoo ORDER BY RANDOM() LIMIT 8);")
-    zoos = cur.fetchall()
+
+    for row in cur.fetchall():
+...     response.append(dict(zip(columns, row)))
     cur.close()
 
-    response = {}
-
-    response = zoos[0];
-    print(zoos[0])
     #return jsonify(response)
-    return json.dumps(response)
+    return response
 
 @app.route('/contests/<int:contest_id>', methods=['GET'])
 def getContest(contest_id):
