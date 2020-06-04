@@ -140,6 +140,7 @@ def getContestSponsors(contest_id):
     response = []
     sponsorIDs = []
 
+    #getting sponsor IDs based on contest id
     cur = get_db().execute("SELECT sponsorID FROM Support WHERE contestID = "+str(contest_id)+";")
     columns = [column[0] for column in cur.description]
     for row in cur.fetchall():
@@ -147,20 +148,16 @@ def getContestSponsors(contest_id):
     
     cur.close()
     
-    #transforming list in string
-    #ids = str(sponsorIDs).strip('[]');
-
+    #getting all information about each sponsor
     cur = get_db().execute("SELECT * FROM Sponsor WHERE ID IN ("+str(sponsorIDs).strip('[]')+");")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
         response.append(dict(zip(columns, row)))
    
-
     cur.close()
-    #return "in progress"
+    
     return jsonify(response)
-
 
 
 #-------------------------------------------------------------
