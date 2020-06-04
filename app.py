@@ -124,12 +124,20 @@ def zoosRecommended():
 
 @app.route('/contests/<int:contest_id>', methods=['GET'])
 def getContest(contest_id):
+    #TODO
+    return jsonify(response)
 
-    #CODE
+@app.route('/contests/<int:contest_id>/sponsors', methods=['GET'])
+def getContest(contest_id):
+    response = []
 
-    response = {}
-    response["MESSAGE"] = f"The server found: {contest_id}"
+    cur = get_db().execute("SELECT * FROM Sponsor WHERE contestID = "+contest_id+");")
+    columns = [column[0] for column in cur.description]
 
+    for row in cur.fetchall():
+        response.append(dict(zip(columns, row)))
+    
+    cur.close()
 
     return jsonify(response)
 
