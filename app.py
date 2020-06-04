@@ -57,6 +57,10 @@ def testdatabase():
 
     response = {}
 
+    #example of printing on logs
+    print("example of printing on logs")
+    sys.stdout.flush()
+
     # Check if user sent a name at all
     if not userinfo[0]:
         response["ERROR"] = "test database, found 0 users"
@@ -142,22 +146,20 @@ def getContestSponsors(contest_id):
         sponsorIDs.append(row["sponsorID"])
     
     cur.close()
-
-    #cur = get_db().execute("SELECT * FROM Sponsor WHERE ID IN ("str(sponsorIDs).strip('[]')");")
-    #columns = [column[0] for column in cur.description]
-
-    #for row in cur2.fetchall():
-    #    response.append(dict(zip(columns, row)))
     
-    print("test")
-    print(str(sponsorIDs).strip('[]'))
-    #print(response)
+    #transforming list in string
+    #ids = str(sponsorIDs).strip('[]');
 
-    sys.stdout.flush()
+    cur = get_db().execute("SELECT * FROM Sponsor WHERE ID IN ("+str(sponsorIDs).strip('[]')+");")
+    columns = [column[0] for column in cur.description]
+
+    for row in cur.fetchall():
+        response.append(dict(zip(columns, row)))
+   
 
     cur.close()
-    return "in progress"
-    #return jsonify(response)
+    #return "in progress"
+    return jsonify(response)
 
 
 
