@@ -130,7 +130,7 @@ def getContest(contest_id):
 def getContestSponsors(contest_id):
     response = []
 
-    cur = get_db().execute("SELECT * FROM Sponsor WHERE contestID = %s);" % contest_id)
+    cur = get_db().execute("SELECT * FROM Sponsor WHERE contestID = "+str(contest_id)+");")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
