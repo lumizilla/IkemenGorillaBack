@@ -82,7 +82,9 @@ if __name__ == '__main__':
 #-------------------------------------------------------------
 
 #API ROUTES
+
 """
+#YAMADA
 @app.route('/contests/', methods=['GET'])
 def contests():
 
@@ -104,6 +106,7 @@ def contests():
 
     return jsonify(response)
 """
+
 @app.route('/zoos/recommended/', methods=['GET'])
 def zoosRecommended():
     response = []
@@ -118,7 +121,9 @@ def zoosRecommended():
     cur.close()
 
     return jsonify(response)
+
 """
+# YAMADA 
 @app.route('/contests/<int:contest_id>', methods=['GET'])
 def getContest(contest_id):
     response = []
@@ -139,7 +144,7 @@ def getContestSponsors(contest_id):
     
     #cur.close()
     aux = cur.fetchall()
-    response["MESSAGE"] = f"The server found: {aux[0]}"
+    response["MESSAGE"] = f"The server found: {aux[0]["sponsorID"]}"
 
     #cur2 = get_db().execute("SELECT * FROM Sponsor WHERE ID ="sponsorIDs['sponsorID']"")
     #columns = [column[0] for column in cur2.description]
