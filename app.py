@@ -128,7 +128,7 @@ def getContest(contest_id):
 
 @app.route('/contests/<int:contest_id>/sponsors', methods=['GET'])
 def getContestSponsors(contest_id):
-    response = []
+    response = {}
     sponsorIDs = []
 
     cur = get_db().execute("SELECT sponsorID FROM Support WHERE contestID = "+str(contest_id)+";")
