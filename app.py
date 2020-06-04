@@ -144,8 +144,8 @@ def getContestSponsors(contest_id):
     
     #cur.close()
     aux = cur.fetchall()
-    aux2 = aux["sponsorID"]
-    response["MESSAGE"] = f"The server found: {aux2}"
+    aux2 = aux[0]
+    response["MESSAGE"] = f"The server found: {aux2["sponsorID"]}"
 
     #cur2 = get_db().execute("SELECT * FROM Sponsor WHERE ID ="sponsorIDs['sponsorID']"")
     #columns = [column[0] for column in cur2.description]
