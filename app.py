@@ -156,9 +156,17 @@ def getContestSponsors(contest_id):
         response.append(dict(zip(columns, row)))
    
     cur.close()
-    
+
     return jsonify(response)
 
+@app.route('/contests/<int:contest_id>/posts', methods=['GET'])
+def getContestPosts(contest_id):
+        
+        response = []
+
+        #TODO
+
+        return jsonify(response)
 
 #-------------------------------------------------------------
 
