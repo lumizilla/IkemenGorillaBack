@@ -1,7 +1,7 @@
 # app.py
 from flask import Flask, request, jsonify, g
 import sqlite3
-
+import sys
 #BASIC APP CODE
 
 app = Flask(__name__)
@@ -154,7 +154,7 @@ def getContestSponsors(contest_id):
     #    response.append(dict(zip(columns, row)))
     print("test")
     sys.stdout.flush()
-    
+
     cur.close()
     #cur2.close()
     return aux2["sponsorID"]
