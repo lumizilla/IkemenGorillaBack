@@ -171,10 +171,33 @@ def getContestSponsors(contest_id):
 def getContestPosts(contest_id):
         
         response = []
+        entries = []
 
+        #selecting entries according to contest_id
+        cur = get_db().execute( \
+            "SELECT e.created AS created_at, e.ID AS id, e.placement, e.animalID AS animal_id, a.name AS animal_name, \
+            a.image_url AS animal_icon_url, a.description, a.zooID AS zoo_id, z.name AS zoo_name \
+                FROM Entry e, Zoo z, Animal a WHERE e.animalID = a.ID AND a.zooID = z.ID AND e.contestID = "+str(contest_id)+";")
+        
+        columns = [column[0] for column in cur.description]
+        for row in cur.fetchall():
+            post = []
+            post = dict(zip(columns, row))
 
+            #adding other animal pictures other than profile
+            pictures = []
+            cur2 = get_db().execute( \
+                    "SELECT Picture.image_url FROM Picture WHERE Picture.animalID = "+str(post["animal_id"])+";") 
+            for row in cur2.fetchall():
+                pictures.append(row["image_url"])
 
-        return jsonify(response)
+            post["image_urls"] = pictures
+            
+            entries.append(post)
+
+        cur.close()
+
+        return jsonify(entries)
 
 
 #-------------------------------------------------------------
