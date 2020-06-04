@@ -83,8 +83,6 @@ if __name__ == '__main__':
 
 #API ROUTES
 
-
-"""
 @app.route('/contests/', methods=['GET'])
 def contests():
 
@@ -92,20 +90,19 @@ def contests():
     status = request.args.get("status", None)
     page = request.args.get("page", None)
 
+    response = []
+
     cur = get_db().execute("SELECT * FROM Contest LIMIT 8;")
-    contestinfo = cur.fetchall()
-
+    columns = [column[0] for column in cur.description]
+    for row in cur.fetchall():
+        response.append(dict(zip(columns, row)))
     cur.close()
-
-    response = {}
-    response["MESSAGE"] = "this is where you have to save the server answer"
-
+    
+    #response["MESSAGE"] = "this is where you have to save the server answer"
     #if not contestinfo[0]:
     #    response["ERROR"] = "test database, found 0 contests"
 
     return jsonify(response)
-"""
-    
 
 @app.route('/zoos/recommended/', methods=['GET'])
 def zoosRecommended():
@@ -140,6 +137,8 @@ def getContest(contest_id):
     cur.close()
 
     return jsonify(response)
+
+
 
 #-------------------------------------------------------------
 
