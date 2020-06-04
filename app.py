@@ -143,19 +143,19 @@ def getContestSponsors(contest_id):
     
     cur.close()
 
-    #response["MESSAGE"] = f"The server found: {aux2["sponsorID"]}"
+    cur = get_db().execute("SELECT * FROM Sponsor WHERE ID ="sponsorIDs";")
+    columns = [column[0] for column in cur.description]
 
-    #cur2 = get_db().execute("SELECT * FROM Sponsor WHERE ID ="sponsorIDs['sponsorID']"")
-    #columns = [column[0] for column in cur2.description]
-
-    #for row in cur2.fetchall():
-    #    response.append(dict(zip(columns, row)))
+    for row in cur2.fetchall():
+        response.append(dict(zip(columns, row)))
+    
     print("test")
     print(sponsorIDs)
+    print(response)
+
     sys.stdout.flush()
 
-    #cur.close()
-    #cur2.close()
+    cur.close()
     return "in progress"
     #return jsonify(response)
 
