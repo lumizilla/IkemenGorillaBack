@@ -2,12 +2,30 @@
 from flask import Flask, request, jsonify, g
 import sqlite3
 import sys
-#BASIC APP CODE
 
 app = Flask(__name__)
 
-#EXAMPLE OF GET
+#DATABASE ACCESS CODE
 
+DATABASE = 'ikemengori.db'
+
+def get_db():
+    db = getattr(g, '_database', None)
+
+    if db is None:
+        db = g._database = sqlite3.connect(DATABASE)
+        db.row_factory = sqlite3.Row
+    return db
+
+@app.teardown_appcontext
+def close_connection(exception):
+    db = getattr(g, '_database', None)
+    if db is not None:
+        db.close()
+
+#-------------------------------------------------------------
+
+#EXAMPLE OF GET
 @app.route('/getecho/', methods=['GET'])
 def respond():
     # Retrieve the name from url parameter
@@ -71,17 +89,6 @@ def testdatabase():
     # Return the response in json format
     return jsonify(response)
 
-#-------------------------------------------------------------
-
-# A welcome message to test our server
-@app.route('/')
-def index():
-    return "<h1>Welcome to our IkemenGorilla server !!</h1>"
-
-if __name__ == '__main__':
-    # Threaded option to enable multiple instances for multiple user access support
-    app.run(threaded=True, port=5000)
-
 
 #-------------------------------------------------------------
 
@@ -110,6 +117,7 @@ def contests():
 
     return jsonify(response)
 """
+
 
 @app.route('/zoos/recommended/', methods=['GET'])
 def zoosRecommended():
@@ -164,27 +172,21 @@ def getContestPosts(contest_id):
         
         response = []
 
-        #TODO
+
 
         return jsonify(response)
 
+
 #-------------------------------------------------------------
 
-#DATABASE ACCESS CODE
+# A welcome message to test our server
+@app.route('/')
+def index():
+    return "<h1>Welcome to our IkemenGorilla server !!</h1>"
 
-DATABASE = 'ikemengori.db'
+if __name__ == '__main__':
+    # Threaded option to enable multiple instances for multiple user access support
+    app.run(threaded=True, port=5000)
 
-def get_db():
-    db = getattr(g, '_database', None)
 
-    if db is None:
-        db = g._database = sqlite3.connect(DATABASE)
-        db.row_factory = sqlite3.Row
-    return db
-
-@app.teardown_appcontext
-def close_connection(exception):
-    db = getattr(g, '_database', None)
-    if db is not None:
-        db.close()
 
