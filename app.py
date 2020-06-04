@@ -133,18 +133,16 @@ def getContest(contest_id):
 
 @app.route('/contests/<int:contest_id>/sponsors', methods=['GET'])
 def getContestSponsors(contest_id):
-    response = {}
+    response = []
     sponsorIDs = []
 
     cur = get_db().execute("SELECT sponsorID FROM Support WHERE contestID = "+str(contest_id)+";")
-    #columns = [column[0] for column in cur.description]
-
-    #for row in cur.fetchall():
-    #    sponsorIDs.append(dict(zip(columns, row)))
+    columns = [column[0] for column in cur.description]
+    for row in cur.fetchall():
+        sponsorIDs.append(row["sponsorID"])
     
-    #cur.close()
-    aux = cur.fetchall()
-    aux2 = aux[0]
+    cur.close()
+
     #response["MESSAGE"] = f"The server found: {aux2["sponsorID"]}"
 
     #cur2 = get_db().execute("SELECT * FROM Sponsor WHERE ID ="sponsorIDs['sponsorID']"")
@@ -153,12 +151,12 @@ def getContestSponsors(contest_id):
     #for row in cur2.fetchall():
     #    response.append(dict(zip(columns, row)))
     print("test")
-    print(aux["sponsorID"])
+    print(sponsorIDs)
     sys.stdout.flush()
 
-    cur.close()
+    #cur.close()
     #cur2.close()
-    return aux2["sponsorID"]
+    return "in progress"
     #return jsonify(response)
 
 
