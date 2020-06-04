@@ -138,7 +138,7 @@ def getContestSponsors(contest_id):
     #    sponsorIDs.append(dict(zip(columns, row)))
     
     #cur.close()
-    response.append(cur[0])
+    response[MESSAGE] = cur.fetchall()
 
     #cur2 = get_db().execute("SELECT * FROM Sponsor WHERE ID ="sponsorIDs['sponsorID']"")
     #columns = [column[0] for column in cur2.description]
