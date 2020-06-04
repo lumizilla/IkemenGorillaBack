@@ -153,8 +153,7 @@ def getContestSponsors(contest_id):
     #for row in cur2.fetchall():
     #    response.append(dict(zip(columns, row)))
     print("test")
-    print(aux2["sponsorID"])
-    print(aux2)
+    print(aux["sponsorID"])
     sys.stdout.flush()
 
     cur.close()
