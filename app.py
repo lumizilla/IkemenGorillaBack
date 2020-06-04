@@ -82,7 +82,7 @@ if __name__ == '__main__':
 #-------------------------------------------------------------
 
 #API ROUTES
-
+"""
 @app.route('/contests/', methods=['GET'])
 def contests():
 
@@ -103,7 +103,7 @@ def contests():
     #    response["ERROR"] = "test database, found 0 contests"
 
     return jsonify(response)
-
+"""
 @app.route('/zoos/recommended/', methods=['GET'])
 def zoosRecommended():
     response = []
@@ -121,6 +121,7 @@ def zoosRecommended():
 
 @app.route('/contests/<int:contest_id>', methods=['GET'])
 def getContest(contest_id):
+    response = []
     #TODO
     return jsonify(response)
 
