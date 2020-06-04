@@ -118,13 +118,14 @@ def zoosRecommended():
     cur.close()
 
     return jsonify(response)
-
+"""
 @app.route('/contests/<int:contest_id>', methods=['GET'])
 def getContest(contest_id):
     response = []
     #TODO
     return jsonify(response)
-
+"""
+"""
 @app.route('/contests/<int:contest_id>/sponsors', methods=['GET'])
 def getContest(contest_id):
     response = []
@@ -138,7 +139,7 @@ def getContest(contest_id):
     cur.close()
 
     return jsonify(response)
-
+"""
 
 
 #-------------------------------------------------------------
