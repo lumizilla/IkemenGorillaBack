@@ -152,10 +152,12 @@ def getContestSponsors(contest_id):
 
     #for row in cur2.fetchall():
     #    response.append(dict(zip(columns, row)))
+    print("test")
+    sys.stdout.flush()
     
     cur.close()
     #cur2.close()
-    return aux2
+    return aux2["sponsorID"]
     #return jsonify(response)
 
 
