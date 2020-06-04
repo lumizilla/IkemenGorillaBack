@@ -125,9 +125,9 @@ def getContest(contest_id):
     #TODO
     return jsonify(response)
 """
-"""
+
 @app.route('/contests/<int:contest_id>/sponsors', methods=['GET'])
-def getContest(contest_id):
+def getContestSponsors(contest_id):
     response = []
 
     cur = get_db().execute("SELECT * FROM Sponsor WHERE contestID = "+contest_id+");")
@@ -139,7 +139,7 @@ def getContest(contest_id):
     cur.close()
 
     return jsonify(response)
-"""
+
 
 
 #-------------------------------------------------------------
