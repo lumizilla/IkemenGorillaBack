@@ -143,15 +143,15 @@ def getContestSponsors(contest_id):
     
     cur.close()
 
-    cur = get_db().execute("SELECT * FROM Sponsor WHERE ID IN ("str(sponsorIDs).strip('[]')");")
-    columns = [column[0] for column in cur.description]
+    #cur = get_db().execute("SELECT * FROM Sponsor WHERE ID IN ("str(sponsorIDs).strip('[]')");")
+    #columns = [column[0] for column in cur.description]
 
-    for row in cur2.fetchall():
-        response.append(dict(zip(columns, row)))
+    #for row in cur2.fetchall():
+    #    response.append(dict(zip(columns, row)))
     
     print("test")
-    print(sponsorIDs)
-    print(response)
+    print(str(sponsorIDs).strip('[]'))
+    #print(response)
 
     sys.stdout.flush()
 
