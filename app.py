@@ -200,6 +200,40 @@ def getContestPosts(contest_id):
         return jsonify(entries)
 
 
+@app.route('/zoos/<int:zoo_id>', methods=['GET'])
+def zooByID(zoo_id):
+    response = []
+
+    cur = get_db().execute("SELECT * FROM Zoo WHERE ID = "+str(zoo_id)+";")
+    columns = [column[0] for column in cur.description]
+
+    for row in cur.fetchall():
+        response.append(dict(zip(columns, row)))
+    
+    cur.close()
+
+    return jsonify(response)
+
+
+@app.route('/createuser', methods=['GET'])
+def createUser():
+    response = []
+    newuser = {}
+
+    cur = get_db().execute("INSERT INTO 'User' ('name', 'image_url', 'profile') VALUES ('','','');")
+    get_db().commit()
+
+    newuser["id"] = cur.lastrowid
+    newuser["name"] = ""
+    newuser["image_url"] = ""
+    newuser["profile"] = ""
+
+    response.append(newuser)
+
+    cur.close()
+
+    return jsonify(response)
+
 #-------------------------------------------------------------
 
 # A welcome message to test our server
