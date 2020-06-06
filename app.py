@@ -293,7 +293,6 @@ def vote(contest_id):
         response["result"] = "error: entry related to this vote doesnt exist"
     cur.close()
 
-
     return jsonify(response)
 
 #-------------------------------------------------------------
