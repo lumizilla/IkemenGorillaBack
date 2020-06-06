@@ -340,6 +340,33 @@ def votedContests(user_id):
     cur.close()
 
     return jsonify(response)
+
+@app.route('/zoos/<int:zoo_id>/favorite', methods=['POST'])
+def favoriteZoo(zoo_id):
+    
+    response = {}
+
+    #proper way to receive parameters in POST
+    user = request.form.get('user_id')
+    cur = get_db().execute("SELECT * FROM 'UserFanZoo' WHERE userID="+str(user)+" AND zooID="+str(zoo_id)+";")
+    fan = cur.fetchone()
+    if(fan == None):
+        cur = get_db().execute("INSERT INTO 'UserFanZoo'('userID', 'zooID') VALUES ("+str(user)+", "+str(zoo_id)+");")
+        get_db().commit()
+
+        if(cur.lastrowid == "" or cur.lastrowid == None):
+            response["error"] = "Insert in table failed."
+            cur.close()
+            return jsonify(response)
+        else:
+            response["result"] = "ok"
+            cur.close()
+            return jsonify(response)
+    else:
+        response["error"] = "User is already fan of this zoo."
+        return jsonify(response)
+
+
 #-------------------------------------------------------------
 
 # A welcome message to test our server
