@@ -234,6 +234,68 @@ def createUser():
 
     return jsonify(response)
 
+@app.route('/users/<int:user_id>', methods=['POST'])
+def editUser(user_id):
+    
+    updateduser = {}
+    #proper way to receive parameters in POST
+    name = request.form.get('name')
+    icon = request.form.get('icon_url')
+
+    cur = get_db().execute("UPDATE 'User' SET name = '"+str(name)+"', 'image_url' = '"+str(icon)+"' WHERE ID = "+str(user_id)+";")
+    get_db().commit()
+
+    updateduser["id"] = user_id
+    updateduser["name"] = name
+    updateduser["icon_url"] = icon
+    updateduser["profile"] = ""
+
+    cur.close()
+
+    response = []
+    response.append(updateduser)
+
+    return jsonify(response)
+
+@app.route('/contests/<int:contest_id>/vote', methods=['POST'])
+def vote(contest_id):
+    
+    response = {}
+
+    #proper way to receive parameters in POST
+    user = request.form.get('user_id')
+    animal = request.form.get('animal_id')
+    
+    if(user == None or user=="" or animal =="" or animal == None):
+        response["result"] = "error: user id or animal id missing."
+        return jsonify(response)
+
+    #selecting the Entry related to the vote
+    cur = get_db().execute("SELECT * FROM 'Entry' WHERE contestID="+str(contest_id)+" AND animalID="+str(animal)+";")
+    entry = cur.fetchone()
+
+    if(entry != None):
+        #see if user already voted
+        cur1 = get_db().execute("SELECT * FROM 'Vote' WHERE entryID="+str(entry["ID"])+" AND userID="+str(user)+";")
+        vote = cur1.fetchone()
+
+        if( vote == None):
+            #insert in table Vote
+            cur2 = get_db().execute("INSERT INTO 'Vote'('entryID', 'userID') VALUES ('"+str(entry["ID"])+"','"+str(user)+"');")
+            get_db().commit()
+            cur2.close()
+            response["result"] = "ok"
+        else:
+            response["result"] = "error: user already voted for this animal in this contest"
+        cur1.close()
+
+    else:
+        response["result"] = "error: entry related to this vote doesnt exist"
+    cur.close()
+
+
+    return jsonify(response)
+
 #-------------------------------------------------------------
 
 # A welcome message to test our server
