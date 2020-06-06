@@ -2,6 +2,7 @@
 from flask import Flask, request, jsonify, g
 import sqlite3
 import sys
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -293,9 +294,52 @@ def vote(contest_id):
         response["result"] = "error: entry related to this vote doesnt exist"
     cur.close()
 
-
     return jsonify(response)
 
+
+@app.route('/users/<int:user_id>/contests', methods=['GET'])
+def votedContests(user_id):
+
+    #finding all the contests which Entries were voted for by user
+    contests = []
+    cur = get_db().execute("SELECT e.contestID FROM Entry e, Vote v \
+        WHERE v.userID ="+str(user_id)+" AND v.entryID = e.ID")
+    columns = [column[0] for column in cur.description]
+    for row in cur.fetchall():
+        contests.append(row["contestID"])
+    cur.close()
+
+    #getting the entire contests
+    response = []    
+    cur = get_db().execute("SELECT * FROM Contest WHERE ID IN ("+str(contests).strip('[]')+");")
+    columns = [column[0] for column in cur.description]
+    for row in cur.fetchall():
+        
+        contest = {}
+        contest = dict(zip(columns, row))
+
+        #add status to contest based on start and end date
+        startdate = row["start"]
+        enddate = row["end"]
+        format_str = '%d/%m/%Y' # The format
+        startdate_obj = datetime.strptime(startdate, format_str)
+        enddate_obj = datetime.strptime(enddate, format_str)
+        presentdate = datetime.now()
+
+        #test if contest ended
+        if(enddate_obj < presentdate):
+            contest["status"] = "ended"
+        #test it contest is current
+        elif(presentdate < enddate_obj and startdate_obj < presentdate):
+            contest["status"] = "current"
+        #else, contest didnt start yet
+        else:
+            contest["status"] = "upcoming"
+
+        response.append(contest)    
+    cur.close()
+
+    return jsonify(response)
 #-------------------------------------------------------------
 
 # A welcome message to test our server
