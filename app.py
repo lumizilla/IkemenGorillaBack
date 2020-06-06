@@ -366,6 +366,31 @@ def favoriteZoo(zoo_id):
         response["error"] = "User is already fan of this zoo."
         return jsonify(response)
 
+@app.route('/animals/<int:animal_id>/fan', methods=['POST'])
+def favoriteAnimal(animal_id):
+    
+    response = {}
+
+    #proper way to receive parameters in POST
+    user = request.form.get('user_id')
+
+    cur = get_db().execute("SELECT * FROM 'UserFanAnimal' WHERE userID="+str(user)+" AND animalID="+str(animal_id)+";")
+    fan = cur.fetchone()
+    if(fan == None):
+        cur = get_db().execute("INSERT INTO 'UserFanAnimal'('userID', 'animalID') VALUES ("+str(user)+", "+str(animal_id)+");")
+        get_db().commit()
+
+        if(cur.lastrowid == "" or cur.lastrowid == None):
+            response["error"] = "Insert in table failed."
+            cur.close()
+            return jsonify(response)
+        else:
+            response["result"] = "ok"
+            cur.close()
+            return jsonify(response)
+    else:
+        response["error"] = "User is already fan of this animal."
+        return jsonify(response)
 
 #-------------------------------------------------------------
 
