@@ -51,4 +51,4 @@ INSERT INTO 'Contest' VALUES 	(1,	'contest1',	'01/04/1909',	'01/04/2909',	'conte
 INSERT INTO 'Contest' VALUES 	(2,	'contest2',	'01/04/1909',	'01/04/3909',	'contest2',	'some url',	'some description');
 INSERT INTO 'Contest' VALUES 	(3,	'contest3',	'01/04/1909',	'01/04/1910',	'contest3',	'some url',	'some description');
 INSERT INTO 'Contest' VALUES 	(4,	'contest4',	'01/04/1909',	'01/04/1909',	'contest4',	'some url',	'some description');
-INSERT INTO 'Contest' VALUES 	(1,	'contest1',	'01/04/1909',	'01/04/2909',	'contest1',	'some url',	'some description');
+INSERT INTO 'Contest' VALUES 	(5,	'contest1',	'01/04/1909',	'01/04/2909',	'contest1',	'some url',	'some description');

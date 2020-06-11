@@ -125,7 +125,7 @@ def zoosRecommended():
     response = []
 
     #Getting random 8 zoos in a optimized manner
-    cur = get_db().execute("SELECT * FROM Zoo WHERE ID IN (SELECT ID FROM Zoo ORDER BY RANDOM() LIMIT 8);")
+    cur = get_db().execute("SELECT ID, name, image_url FROM Zoo WHERE ID IN (SELECT ID FROM Zoo ORDER BY RANDOM() LIMIT 8);")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
@@ -168,6 +168,7 @@ def getContestSponsors(contest_id):
 
     return jsonify(response)
 
+#TODO CHECK THIS FUNCTION and ADD PAGING
 @app.route('/contests/<int:contest_id>/posts', methods=['GET'])
 def getContestPosts(contest_id):
         
@@ -200,7 +201,7 @@ def getContestPosts(contest_id):
 
         return jsonify(entries)
 
-
+#TODO ADD IF THIS ZOO IS FAVORITE AND THE NUMBER OF FAVORITES
 @app.route('/zoos/<int:zoo_id>', methods=['GET'])
 def zooByID(zoo_id):
     response = []
@@ -258,6 +259,7 @@ def editUser(user_id):
 
     return jsonify(response)
 
+#TODO Update the date last voted AND increase the counter of votes
 @app.route('/contests/<int:contest_id>/vote', methods=['POST'])
 def vote(contest_id):
     
@@ -296,7 +298,7 @@ def vote(contest_id):
 
     return jsonify(response)
 
-
+#TODO limit 8 contests AND add paging
 @app.route('/users/<int:user_id>/contests', methods=['GET'])
 def votedContests(user_id):
 
