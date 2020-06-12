@@ -95,7 +95,6 @@ def testdatabase():
 
 #API ROUTES
 
-"""
 #YAMADA
 @app.route('/contests/', methods=['GET'])
 def contests():
@@ -104,20 +103,20 @@ def contests():
     status = request.args.get("status", None)
     page = request.args.get("page", None)
 
-    response = []
-
-    cur = get_db().execute("SELECT * FROM Contest LIMIT 8;")
-    columns = [column[0] for column in cur.description]
-    for row in cur.fetchall():
-        response.append(dict(zip(columns, row)))
+    cur = get_db().execute("SELECT * FROM contest LIMIT 8;")
+    contestinfo = cur.fetchall()
     cur.close()
-    
-    #response["MESSAGE"] = "this is where you have to save the server answer"
-    #if not contestinfo[0]:
-    #    response["ERROR"] = "test database, found 0 contests"
+
+    response = {}
+
+    #CODE
+    #if (status[0] and page[0]):
+        #do code for it
+
+    if not contestinfo[0]:
+        response["ERROR"] = "test database, found 0 contests"
 
     return jsonify(response)
-"""
 
 
 @app.route('/zoos/recommended/', methods=['GET'])
@@ -135,14 +134,34 @@ def zoosRecommended():
 
     return jsonify(response)
 
-"""
 # YAMADA 
+'''
 @app.route('/contests/<int:contest_id>', methods=['GET'])
 def getContest(contest_id):
-    response = []
-    #TODO
+    response = {}
+
+    cur = get_db().execute("SELECT * FROM Contest WHERE ID = "+str(contest_id)+";")
+    columns = [column[0] for column in cur.description]
+
+    for row in cur.fetchall():
+        #response.append(dict(zip(columns, row)))
+        response = dict(zip(columns, row))
+   
+    cur.close()
+
+    
+    cur = get_db().execute("SELECT COUNT(*) AS number_of_entries FROM Entry WHERE contestID = "+str(contest_id)+";")
+    columns = [column[0] for column in cur.description]
+
+    for row in cur.fetchall():
+        response[columns[0]]=row[0]
+   
+    cur.close()
+    
+
     return jsonify(response)
-"""
+    #VoteにコンテストIDがないので続行不可能.
+'''
 
 @app.route('/contests/<int:contest_id>/sponsors', methods=['GET'])
 def getContestSponsors(contest_id):
@@ -167,6 +186,23 @@ def getContestSponsors(contest_id):
     cur.close()
 
     return jsonify(response)
+
+
+#YAMADA
+@app.route('/contests/<int:contest_id>/animals', methods=['GET'])
+def getContestAnimal(contest_id):
+    response = []
+
+    cur = get_db().execute("SELECT animalID AS animal_id, Animal.name, Animal.image_url AS icon_url, Zoo.name AS zoo_name FROM Entry, Animal, Zoo WHERE contestID = "+str(contest_id)+" AND Entry.animalID = Animal.ID AND Animal.ZooID = Zoo.id LIMIT 8;")
+    columns = [column[0] for column in cur.description]
+
+    for row in cur.fetchall():
+        response.append(dict(zip(columns, row)))
+   
+    cur.close()
+
+    return jsonify(response)
+
 
 #TODO CHECK THIS FUNCTION and ADD PAGING
 @app.route('/contests/<int:contest_id>/posts', methods=['GET'])
@@ -200,6 +236,25 @@ def getContestPosts(contest_id):
         cur.close()
 
         return jsonify(entries)
+
+
+'''
+#YAMADA
+#テーブルがないので未完
+@app.route('/contests/<int:contest_id>/aword', methods=['GET'])
+def getContestAnimal(contest_id):
+    response = []
+
+    cur = get_db().execute("SELECT animal_id, name, icon_url, zoo_name FROM Entry, Animal WHERE contestID = "+str(contest_id)+" AND Entry.animalID = Animal.ID LIMIT 8;")
+    columns = [column[0] for column in cur.description]
+
+    for row in cur.fetchall():
+        response.append(dict(zip(columns, row)))
+   
+    cur.close()
+
+    return jsonify(response)
+'''
 
 #TODO ADD IF THIS ZOO IS FAVORITE AND THE NUMBER OF FAVORITES
 @app.route('/zoos/<int:zoo_id>', methods=['GET'])
