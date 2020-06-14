@@ -494,6 +494,32 @@ def vote(contest_id):
 
     return jsonify(response)
 
+
+#TODO 
+@app.route('/search', methods=['GET'])
+def searchPosts():
+    keyword = request.args.get("query", None)
+    response = []
+
+    #searching posts by animal name, zoo name, description, animal species 
+    cur = get_db().execute( \
+        "SELECT p.created AS created_at, p.ID AS id, a.ID AS animal_id, a.name AS animal_name, \
+        a.image_url AS animal_icon_url, p.description, z.ID AS zoo_id, z.name AS zoo_name, p.image_url \
+        FROM Zoo z, Animal a, Post p \
+        WHERE (a.zooID = z.ID AND p.animalID = a.ID) AND \
+        (z.name='"+keyword+"' OR a.name='"+keyword+"' OR a.species='"+keyword+"' OR p.description LIKE '%"+keyword+"%') \
+        LIMIT 24;")
+    
+    columns = [column[0] for column in cur.description]
+    for row in cur.fetchall():
+        response.append(dict(zip(columns, row)))
+
+    cur.close()
+
+    return jsonify(response)
+
+
+
 #TODO limit 8 contests AND add paging
 @app.route('/users/<int:user_id>/contests', methods=['GET'])
 def votedContests(user_id):
