@@ -351,6 +351,55 @@ def zooPosts(zoo_id):
 
     return jsonify(response)
 
+#TODO limit 8 contests AND add paging
+@app.route('/animals/<int:animal_id>/contests', methods=['GET'])
+def animalContests(animal_id):
+    #variable got from parameters
+    status = request.args.get("status", None)
+
+    #finding all the contests which Entries have animal_id
+    contests = []
+    cur = get_db().execute("SELECT e.contestID FROM Entry e WHERE e.animalID ="+str(animal_id)+";")
+    columns = [column[0] for column in cur.description]
+    for row in cur.fetchall():
+        contests.append(row["contestID"])
+    cur.close()
+
+    #getting the entire contests
+    response = []    
+    cur = get_db().execute("SELECT * FROM Contest WHERE ID IN ("+str(contests).strip('[]')+");")
+    columns = [column[0] for column in cur.description]
+    for row in cur.fetchall():
+        
+        contest = {}
+        contest = dict(zip(columns, row))
+
+        #add status to contest based on start and end date
+        startdate = row["start"]
+        enddate = row["end"]
+        format_str = '%d/%m/%Y' # The format
+        startdate_obj = datetime.strptime(startdate, format_str)
+        enddate_obj = datetime.strptime(enddate, format_str)
+        presentdate = datetime.now()
+
+        #test if contest ended
+        if(enddate_obj < presentdate):
+            contest["status"] = "ended"
+        #test it contest is current
+        elif(presentdate < enddate_obj and startdate_obj < presentdate):
+            contest["status"] = "current"
+        #else, contest didnt start yet
+        else:
+            contest["status"] = "upcoming"
+
+        #filtering contests by the status given in parameters
+        if(contest["status"] == status or status == None or status == ""):
+            response.append(contest)    
+
+    cur.close()
+
+    return jsonify(response)
+
 @app.route('/createuser', methods=['GET'])
 def createUser():
     response = []
