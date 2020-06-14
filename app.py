@@ -300,18 +300,35 @@ def getAnimalPosts(animal_id):
 
     return jsonify(response)
 
-#TODO ADD IF THIS ZOO IS FAVORITE AND THE NUMBER OF FAVORITES
 @app.route('/zoos/<int:zoo_id>', methods=['GET'])
 def zooByID(zoo_id):
-    response = []
+    user = request.args.get("user_id", None)
 
+    response = []
+    zoo = {}
+
+    #getting zoo
     cur = get_db().execute("SELECT * FROM Zoo WHERE ID = "+str(zoo_id)+";")
     columns = [column[0] for column in cur.description]
-
-    for row in cur.fetchall():
-        response.append(dict(zip(columns, row)))
+    zoo = dict(zip(columns, cur.fetchone()))
     
+    #getting how many favorites
+    cur = get_db().execute("SELECT COUNT(ID) as nfavorites FROM UserFanZoo WHERE zooID = "+str(zoo_id)+";")
+    columns = [column[0] for column in cur.description]
+    result = dict(zip(columns, cur.fetchone()))
+    zoo["number_of_favorites"] = result["nfavorites"]
+
+    #getting if this user has zoo as favorite
+    cur = get_db().execute("SELECT COUNT(ID) as fan FROM UserFanZoo WHERE userID = "+str(user)+" AND zooID = "+str(zoo_id)+";")
+    columns = [column[0] for column in cur.description]
+    result = dict(zip(columns, cur.fetchone()))
+    if(result["fan"] == 0):
+        zoo["is_favorite"] = False
+    else:
+        zoo["is_favorite"] = True
+
     cur.close()
+    response.append(zoo)
 
     return jsonify(response)
 
