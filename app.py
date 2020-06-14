@@ -204,34 +204,23 @@ def getContestAnimal(contest_id):
     return jsonify(response)
 
 
-#TODO CHECK THIS FUNCTION and ADD PAGING
+#TODO ADD PAGING
 @app.route('/contests/<int:contest_id>/posts', methods=['GET'])
 def getContestPosts(contest_id):
         
         response = []
         entries = []
 
-        #selecting entries according to contest_id
+        #selecting Posts according to contest_id
+        #this is a merge of Contest -> Entry -> Zoo/Animal -> Post entities. 
         cur = get_db().execute( \
-            "SELECT e.created AS created_at, e.ID AS id, e.placement, e.animalID AS animal_id, a.name AS animal_name, \
-            a.image_url AS animal_icon_url, a.description, a.zooID AS zoo_id, z.name AS zoo_name \
-                FROM Entry e, Zoo z, Animal a WHERE e.animalID = a.ID AND a.zooID = z.ID AND e.contestID = "+str(contest_id)+";")
+            "SELECT p.created AS created_at, p.ID AS id, a.ID AS animal_id, a.name AS animal_name, \
+            a.image_url AS animal_icon_url, p.description, z.ID AS zoo_id, z.name AS zoo_name, p.image_url \
+                FROM Entry e, Zoo z, Animal a, Post p WHERE e.animalID = a.ID AND a.zooID = z.ID AND p.animalID = a.ID AND e.contestID = "+str(contest_id)+";")
         
         columns = [column[0] for column in cur.description]
         for row in cur.fetchall():
-            post = []
-            post = dict(zip(columns, row))
-
-            #adding other animal pictures other than profile
-            pictures = []
-            cur2 = get_db().execute( \
-                    "SELECT Picture.image_url FROM Picture WHERE Picture.animalID = "+str(post["animal_id"])+";") 
-            for row in cur2.fetchall():
-                pictures.append(row["image_url"])
-
-            post["image_urls"] = pictures
-            
-            entries.append(post)
+            entries.append(dict(zip(columns, row)))
 
         cur.close()
 
@@ -255,6 +244,42 @@ def getContestAnimal(contest_id):
 
     return jsonify(response)
 '''
+
+@app.route('/contests/<int:contest_id>/results', methods=['GET'])
+def getContestResults(contest_id):
+    response = []
+
+    #getting animals and votes of each animal
+    cur = get_db().execute("SELECT a.ID, a.name, a.image_url, SUM(v.count) as number_of_votes \
+        FROM Animal a, Vote v, Entry e \
+        WHERE e.animalID = a.ID AND v.entryID = e.ID AND e.contestID = "+str(contest_id)+" \
+        GROUP BY a.ID ORDER BY number_of_votes DESC;")
+    
+    first = cur.fetchone()
+
+    if(first == None):
+        err = {}
+        err["error"] = "this contest has 0 votes"
+        response.append(err)
+        return jsonify(response)
+    else:
+        columns = [column[0] for column in cur.description]
+        #getting max number of votes in this contest
+        firstPlace = []
+        firstPlace = dict(zip(columns, first))
+        firstPlace['max_of_votes'] = firstPlace['number_of_votes']
+        response.append(firstPlace)
+
+        for row in cur.fetchall():
+            res = []
+            res = dict(zip(columns, row))
+            res['max_of_votes'] = firstPlace['number_of_votes']
+
+            response.append(res)
+
+    cur.close()
+
+    return jsonify(response)
 
 #TODO ADD IF THIS ZOO IS FAVORITE AND THE NUMBER OF FAVORITES
 @app.route('/zoos/<int:zoo_id>', methods=['GET'])
@@ -291,6 +316,7 @@ def createUser():
 
     return jsonify(response)
 
+#TODO add profile data
 @app.route('/users/<int:user_id>', methods=['POST'])
 def editUser(user_id):
     
@@ -314,7 +340,6 @@ def editUser(user_id):
 
     return jsonify(response)
 
-#TODO Update the date last voted AND increase the counter of votes
 @app.route('/contests/<int:contest_id>/vote', methods=['POST'])
 def vote(contest_id):
     
@@ -337,14 +362,27 @@ def vote(contest_id):
         cur1 = get_db().execute("SELECT * FROM 'Vote' WHERE entryID="+str(entry["ID"])+" AND userID="+str(user)+";")
         vote = cur1.fetchone()
 
+        #if not then create a new Vote
         if( vote == None):
             #insert in table Vote
-            cur2 = get_db().execute("INSERT INTO 'Vote'('entryID', 'userID') VALUES ('"+str(entry["ID"])+"','"+str(user)+"');")
+            cur2 = get_db().execute("INSERT INTO 'Vote'('entryID', 'userID', 'count', 'lastVoted') VALUES ('"+str(entry["ID"])+"','"+str(user)+"', 1, '"+datetime.today().strftime('%d/%m/%Y')+"');")
             get_db().commit()
             cur2.close()
             response["result"] = "ok"
+        #else increase the count
         else:
-            response["result"] = "error: user already voted for this animal in this contest"
+            #test if user already voted 
+            if(vote['lastVoted'] == datetime.today().strftime('%d/%m/%Y')):
+                response["result"] = "error: already voted"
+            else:
+                voteID = str(vote['ID'])
+                voteCount = vote['count'] + 1;
+                cur2 = get_db().execute("UPDATE 'Vote' SET count="+str(voteCount)+", lastVoted='"+datetime.today().strftime('%d/%m/%Y')+"' \
+                    WHERE ID = "+voteID+";")
+                get_db().commit()
+                cur2.close()
+                response["result"] = "ok"
+
         cur1.close()
 
     else:
