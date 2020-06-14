@@ -332,6 +332,24 @@ def zooByID(zoo_id):
 
     return jsonify(response)
 
+#TODO add pagination
+@app.route('/zoos/<int:zoo_id>/posts', methods=['GET'])
+def zooPosts(zoo_id):
+    response = []
+
+    #selecting Posts according to zoo_id
+    cur = get_db().execute( \
+        "SELECT p.created AS created_at, p.ID AS id, a.ID AS animal_id, a.name AS animal_name, \
+        a.image_url AS animal_icon_url, p.description, z.ID AS zoo_id, z.name AS zoo_name, p.image_url \
+            FROM Zoo z, Animal a, Post p WHERE a.zooID = z.ID AND p.animalID = a.ID AND z.ID = "+str(zoo_id)+";")
+    
+    columns = [column[0] for column in cur.description]
+    for row in cur.fetchall():
+        response.append(dict(zip(columns, row)))
+
+    cur.close()
+
+    return jsonify(response)
 
 @app.route('/createuser', methods=['GET'])
 def createUser():
