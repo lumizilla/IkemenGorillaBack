@@ -207,8 +207,6 @@ def getContestAnimal(contest_id):
 #TODO ADD PAGING
 @app.route('/contests/<int:contest_id>/posts', methods=['GET'])
 def getContestPosts(contest_id):
-        
-        response = []
         entries = []
 
         #selecting Posts according to contest_id
@@ -276,6 +274,27 @@ def getContestResults(contest_id):
             res['max_of_votes'] = firstPlace['number_of_votes']
 
             response.append(res)
+
+    cur.close()
+
+    return jsonify(response)
+
+#TODO ADD PAGINATION
+@app.route('/animals/<int:animal_id>/posts', methods=['GET'])
+def getAnimalPosts(animal_id):
+    page = request.args.get("page", None)
+
+    response = []
+
+    #selecting Posts according to animal_id 
+    cur = get_db().execute( \
+        "SELECT p.created AS created_at, p.ID AS id, a.ID AS animal_id, a.name AS animal_name, \
+        a.image_url AS animal_icon_url, p.description, z.ID AS zoo_id, z.name AS zoo_name, p.image_url \
+        FROM Zoo z, Animal a, Post p WHERE a.zooID = z.ID AND p.animalID = a.ID AND a.ID = "+str(animal_id)+";")
+    
+    columns = [column[0] for column in cur.description]
+    for row in cur.fetchall():
+        response.append(dict(zip(columns, row)))
 
     cur.close()
 
