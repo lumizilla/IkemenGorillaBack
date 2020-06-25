@@ -725,7 +725,7 @@ def getAnimalPage(animal_id):
 def getAnimalPosts(animal_id):
     response = []
 
-    cur = get_db().execute("SELECT Post.ID AS id, Animal.ID AS animal_id, Animal.name AS animal_name, Animal.image_url AS animalicon_url, Animal.zooID as zoo_id, Zoo.name AS zoo_name, Post.image_url AS image_urls, Post.description AS description, created AS created_at FROM Animal, Post, Zoo WHERE Animal.ID = Post.animalID AND Animal.zooID = Zoo.ID AND Animal.id = "+str(animal_id)+";")
+    cur = get_db().execute("SELECT Post.ID AS id, Animal.ID AS animal_id, Animal.name AS animal_name, Animal.image_url AS animalicon_url, Animal.zooID as zoo_id, Zoo.name AS zoo_name, Post.image_url AS image_url, Post.description AS description, created AS created_at FROM Animal, Post, Zoo WHERE Animal.ID = Post.animalID AND Animal.zooID = Zoo.ID AND Animal.id = "+str(animal_id)+";")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
@@ -740,7 +740,7 @@ def getAnimalPosts(animal_id):
 def getPosts():
     response = []
 
-    cur = get_db().execute("SELECT Post.ID AS id, Animal.ID AS animal_id, Animal.name AS animal_name, Animal.image_url AS animalicon_url, Animal.zooID as zoo_id, Zoo.name AS zoo_name, Post.image_url AS image_urls, Post.description AS description, created AS created_at FROM Animal, Post, Zoo WHERE Animal.ID = Post.animalID AND Animal.zooID = Zoo.ID;")
+    cur = get_db().execute("SELECT Post.ID AS id, Animal.ID AS animal_id, Animal.name AS animal_name, Animal.image_url AS animalicon_url, Animal.zooID as zoo_id, Zoo.name AS zoo_name, Post.image_url AS image_url, Post.description AS description, created AS created_at FROM Animal, Post, Zoo WHERE Animal.ID = Post.animalID AND Animal.zooID = Zoo.ID;")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
