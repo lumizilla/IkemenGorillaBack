@@ -193,6 +193,7 @@ def getContestResults(contest_id):
 
     return jsonify(response)
 
+'''
 #TODO ADD PAGINATION
 @app.route('/animals/<int:animal_id>/posts', methods=['GET'])
 def getAnimalPosts(animal_id):
@@ -213,6 +214,7 @@ def getAnimalPosts(animal_id):
     cur.close()
 
     return jsonify(response)
+'''
 
 @app.route('/zoos/<int:zoo_id>', methods=['GET'])
 def zooByID(zoo_id):
@@ -555,26 +557,7 @@ def contests():
     return jsonify(response)
 
 
-@app.route('/contests/<int:contest_id>', methods=['GET'])
-def showContest():
-    cur = get_db().execute("SELECT * FROM contest WHERE id = contest_id;")
-    userinfo = cur.fetchall()
-    cur.close()
 
-    response = {}
-
-    # Check if user sent a name at all
-    if not userinfo[0]:
-        response["ERROR"] = "test database, found 0 users"
-    # Now the user entered a valid name
-    else:
-        response["MESSAGE"] = f"The server found: {userinfo[0]}"
-
-    # Return the response in json format
-    return jsonify(response)
-
-
-'''
 @app.route('/contests/<int:contest_id>', methods=['GET'])
 def getContest(contest_id):
     response = {}
@@ -596,11 +579,30 @@ def getContest(contest_id):
         response[columns[0]]=row[0]
    
     cur.close()
+
+    
+    cur = get_db().execute("SELECT COUNT(*) AS number_people_that_voted FROM Entry, Vote WHERE Entry.ID=Vote.entryID AND contestID = "+str(contest_id)+" GROUP BY userID ;")
+    columns = [column[0] for column in cur.description]
+
+    for row in cur.fetchall():
+        response[columns[0]]=row[0]
+   
+    cur.close()
+
+
+    cur = get_db().execute("SELECT COUNT(*) AS number_of_votes FROM Entry, Vote WHERE Entry.ID=Vote.entryID AND contestID = "+str(contest_id)+" ;")
+    columns = [column[0] for column in cur.description]
+
+    for row in cur.fetchall():
+        response[columns[0]]=row[0]
+   
+    cur.close()
+    
     
 
     return jsonify(response)
     #VoteにコンテストIDがないので続行不可能.
-'''
+
 
 
 @app.route('/contests/<int:contest_id>/animals', methods=['GET'])
