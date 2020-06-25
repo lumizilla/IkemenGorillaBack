@@ -601,7 +601,6 @@ def getContest(contest_id):
     
 
     return jsonify(response)
-    #VoteにコンテストIDがないので続行不可能.
 
 
 
@@ -620,13 +619,11 @@ def getContestAnimal(contest_id):
     return jsonify(response)
 
 
-'''
-#テーブルがない
-@app.route('/contests/<int:contest_id>/aword', methods=['GET'])
-def getContestAnimal(contest_id):
+@app.route('/contests/<int:contest_id>/awards', methods=['GET'])
+def getContestAwards(contest_id):
     response = []
 
-    cur = get_db().execute("SELECT animal_id, name, icon_url, zoo_name FROM Entry, Animal WHERE contestID = "+str(contest_id)+" AND Entry.animalID = Animal.ID LIMIT 8;")
+    cur = get_db().execute("SELECT animalID as animal_id, Animal.name as animal_name, Animal.image_url AS icon_url, award AS award_name FROM Entry, Animal WHERE contestID = "+str(contest_id)+" AND Entry.animalID = Animal.ID;")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
@@ -635,7 +632,7 @@ def getContestAnimal(contest_id):
     cur.close()
 
     return jsonify(response)
-'''
+
 
 
 @app.route('/contests/<int:contest_id>/animals/<int:animal_id>', methods=['GET'])
