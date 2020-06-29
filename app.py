@@ -534,7 +534,7 @@ def favoriteAnimal(animal_id):
 
 #YAMADA
 
-@app.route('/contests/', methods=['GET'])
+@app.route('/contests', methods=['GET'])
 def contests():
 
     # Retrieve url parameters
@@ -639,7 +639,7 @@ def getContestAwards(contest_id):
 def getContestAnimalPage(contest_id, animal_id):
     response = {}
 
-    cur = get_db().execute("SELECT animalID AS id, Animal.name, Animal.image_url AS icon_url, description FROM Animal, Entry WHERE Animal.id = Entry.animalID AND Animal.id = "+str(animal_id)+" AND Entry.contestID = "+str(contest_id)+";")
+    cur = get_db().execute("SELECT animalID AS animal_id, Animal.name AS annimal_name, Animal.image_url AS animal_icon_url, description FROM Animal, Entry WHERE Animal.id = Entry.animalID AND Animal.id = "+str(animal_id)+" AND Entry.contestID = "+str(contest_id)+";")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
@@ -647,13 +647,13 @@ def getContestAnimalPage(contest_id, animal_id):
         response = dict(zip(columns, row))
     cur.close()
 
-    cur = get_db().execute("SELECT Zoo.ID AS id, Zoo.name, address FROM Zoo,Animal WHERE Zoo.ID = Animal.zooID AND Animal.ID = "+str(animal_id)+";")
+    cur = get_db().execute("SELECT Zoo.ID AS zoo_id, Zoo.name AS zoo_name, address AS zoo_address FROM Zoo,Animal WHERE Zoo.ID = Animal.zooID AND Animal.ID = "+str(animal_id)+";")
     columns = [column[0] for column in cur.description]
     subresponse = {}
     for row in cur.fetchall():
         #response.append(dict(zip(columns, row)))
         subresponse = dict(zip(columns, row))
-    response["zoo"] = subresponse
+    response["is_voted_today"] = False
     cur.close()
 
     return jsonify(response)
