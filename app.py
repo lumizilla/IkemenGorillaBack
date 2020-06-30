@@ -696,7 +696,7 @@ def getZooAnimals(zoo_id):
 def getAnimalPage(animal_id):
     response = {}
 
-    cur = get_db().execute("SELECT ID AS id, name, image_url AS icon_url, sex, birthday, description FROM Animal WHERE Animal.id = "+str(animal_id)+";")
+    cur = get_db().execute("SELECT ID AS id, name, image_url AS icon_url, sex, birthday, description, Zoo.name AS zoo_name FROM Animal, Zoo WHERE Animal.zooID = Aoo.id AND Animal.id = "+str(animal_id)+";")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
