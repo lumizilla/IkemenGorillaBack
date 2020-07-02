@@ -140,13 +140,17 @@ def getContestSponsors(contest_id):
 @app.route('/contests/<int:contest_id>/posts', methods=['GET'])
 def getContestPosts(contest_id):
         entries = []
+        # Retrieve url parameters
+        status = request.args.get("status", None)
+        page = request.args.get("page", None)
 
         #selecting Posts according to contest_id
         #this is a merge of Contest -> Entry -> Zoo/Animal -> Post entities. 
         cur = get_db().execute( \
             "SELECT p.created AS created_at, p.ID AS id, a.ID AS animal_id, a.name AS animal_name, \
             a.image_url AS animal_icon_url, p.description, z.ID AS zoo_id, z.name AS zoo_name, p.image_url \
-                FROM Entry e, Zoo z, Animal a, Post p WHERE e.animalID = a.ID AND a.zooID = z.ID AND p.animalID = a.ID AND e.contestID = "+str(contest_id)+";")
+                FROM Entry e, Zoo z, Animal a, Post p WHERE e.animalID = a.ID AND a.zooID = z.ID AND p.animalID = a.ID AND e.contestID = "+str(contest_id)+" \
+                LIMIT 12 OFFSET " + str(12 * int(page)) ";")
         
         columns = [column[0] for column in cur.description]
         for row in cur.fetchall():
@@ -541,18 +545,27 @@ def contests():
     status = request.args.get("status", None)
     page = request.args.get("page", None)
 
-    cur = get_db().execute("SELECT * FROM contest LIMIT 8;")
-    contestinfo = cur.fetchall()
-    cur.close()
+    cur = get_db().execute("SELECT * FROM Contest LIMIT 8 OFFSET " + str(8*int(page)) +  ";")
+    #cur = get_db().execute("SELECT * FROM Contest;")
+    #contestinfo = cur.fetchall()
 
-    response = {}
+    response = []
+
+    columns = [column[0] for column in cur.description]
+
+    for row in cur.fetchall():
+        response.append(dict(zip(columns, row)))
+   
+    cur.close()
 
     #CODE
     #if (status[0] and page[0]):
         #do code for it
 
+    """
     if not contestinfo[0]:
         response["ERROR"] = "test database, found 0 contests"
+    """
 
     return jsonify(response)
 
@@ -607,8 +620,10 @@ def getContest(contest_id):
 @app.route('/contests/<int:contest_id>/animals', methods=['GET'])
 def getContestAnimal(contest_id):
     response = []
+    # Retrieve url parameters
+    page = request.args.get("page", None)
 
-    cur = get_db().execute("SELECT animalID AS animal_id, Animal.name, Animal.image_url AS icon_url, Zoo.name AS zoo_name FROM Entry, Animal, Zoo WHERE contestID = "+str(contest_id)+" AND Entry.animalID = Animal.ID AND Animal.ZooID = Zoo.id LIMIT 8;")
+    cur = get_db().execute("SELECT animalID AS animal_id, Animal.name, Animal.image_url AS icon_url, Zoo.name AS zoo_name FROM Entry, Animal, Zoo WHERE contestID = "+str(contest_id)+" AND Entry.animalID = Animal.ID AND Animal.ZooID = Zoo.id LIMIT 8 OFFSET " + str(8*int(page)) + ";")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
