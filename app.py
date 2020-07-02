@@ -150,7 +150,7 @@ def getContestPosts(contest_id):
             "SELECT p.created AS created_at, p.ID AS id, a.ID AS animal_id, a.name AS animal_name, \
             a.image_url AS animal_icon_url, p.description, z.ID AS zoo_id, z.name AS zoo_name, p.image_url \
                 FROM Entry e, Zoo z, Animal a, Post p WHERE e.animalID = a.ID AND a.zooID = z.ID AND p.animalID = a.ID AND e.contestID = "+str(contest_id)+" \
-                LIMIT 12 OFFSET " + str(12 * int(page)) ";")
+                LIMIT 12 OFFSET " + str(12 * int(page)) + ";")
         
         columns = [column[0] for column in cur.description]
         for row in cur.fetchall():
@@ -198,6 +198,7 @@ def getContestResults(contest_id):
     return jsonify(response)
 
 '''
+
 #TODO ADD PAGINATION
 @app.route('/animals/<int:animal_id>/posts', methods=['GET'])
 def getAnimalPosts(animal_id):
@@ -209,7 +210,8 @@ def getAnimalPosts(animal_id):
     cur = get_db().execute( \
         "SELECT p.created AS created_at, p.ID AS id, a.ID AS animal_id, a.name AS animal_name, \
         a.image_url AS animal_icon_url, p.description, z.ID AS zoo_id, z.name AS zoo_name, p.image_url \
-        FROM Zoo z, Animal a, Post p WHERE a.zooID = z.ID AND p.animalID = a.ID AND a.ID = "+str(animal_id)+";")
+        FROM Zoo z, Animal a, Post p WHERE a.zooID = z.ID AND p.animalID = a.ID AND a.ID = "+str(animal_id)+" \
+        ;")
     
     columns = [column[0] for column in cur.description]
     for row in cur.fetchall():
@@ -218,6 +220,7 @@ def getAnimalPosts(animal_id):
     cur.close()
 
     return jsonify(response)
+
 '''
 
 @app.route('/zoos/<int:zoo_id>', methods=['GET'])
