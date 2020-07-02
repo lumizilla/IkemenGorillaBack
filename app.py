@@ -259,13 +259,15 @@ def zooByID(zoo_id):
 @app.route('/zoos/<int:zoo_id>/posts', methods=['GET'])
 def zooPosts(zoo_id):
     response = []
+    page = request.args.get("page", None)
 
     #selecting Posts according to zoo_id
     cur = get_db().execute( \
         "SELECT p.created AS created_at, p.ID AS id, a.ID AS animal_id, a.name AS animal_name, \
         a.image_url AS animal_icon_url, p.description, z.ID AS zoo_id, z.name AS zoo_name, p.image_url \
-            FROM Zoo z, Animal a, Post p WHERE a.zooID = z.ID AND p.animalID = a.ID AND z.ID = "+str(zoo_id)+";")
-    
+            FROM Zoo z, Animal a, Post p WHERE a.zooID = z.ID AND p.animalID = a.ID AND z.ID = "+str(zoo_id)+" \
+            LIMIT 12 OFFSET " + str(12*int(page)) + ";")
+
     columns = [column[0] for column in cur.description]
     for row in cur.fetchall():
         response.append(dict(zip(columns, row)))
@@ -696,8 +698,9 @@ def getZoos():
 @app.route('/zoos/<int:zoo_id>/animals', methods=['GET'])
 def getZooAnimals(zoo_id):
     response = []
+    page = request.args.get("page", None)
 
-    cur = get_db().execute("SELECT Animal.ID AS id, Animal.name, Animal.image_url AS icon_url FROM Animal, Zoo WHERE Zoo.ID = "+str(zoo_id)+" AND Animal.ZooID = Zoo.id;")
+    cur = get_db().execute("SELECT Animal.ID AS id, Animal.name, Animal.image_url AS icon_url FROM Animal, Zoo WHERE Zoo.ID = "+str(zoo_id)+" AND Animal.ZooID = Zoo.id LIMIT 8 OFFSET "+ str(8*int(page)) +";")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
@@ -741,8 +744,9 @@ def getAnimalPage(animal_id):
 @app.route('/animals/<int:animal_id>/posts', methods=['GET'])
 def getAnimalPosts(animal_id):
     response = []
+    page = request.args.get("page", None)
 
-    cur = get_db().execute("SELECT Post.ID AS id, Animal.ID AS animal_id, Animal.name AS animal_name, Animal.image_url AS animalicon_url, Animal.zooID as zoo_id, Zoo.name AS zoo_name, Post.image_url AS image_url, Post.description AS description, created AS created_at FROM Animal, Post, Zoo WHERE Animal.ID = Post.animalID AND Animal.zooID = Zoo.ID AND Animal.id = "+str(animal_id)+";")
+    cur = get_db().execute("SELECT Post.ID AS id, Animal.ID AS animal_id, Animal.name AS animal_name, Animal.image_url AS animalicon_url, Animal.zooID as zoo_id, Zoo.name AS zoo_name, Post.image_url AS image_url, Post.description AS description, created AS created_at FROM Animal, Post, Zoo WHERE Animal.ID = Post.animalID AND Animal.zooID = Zoo.ID AND Animal.id = "+str(animal_id)+" LIMIT 8 OFFSET " + str(8*int(page)) + ";")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
@@ -756,8 +760,9 @@ def getAnimalPosts(animal_id):
 @app.route('/posts', methods=['GET'])
 def getPosts():
     response = []
+    page = request.args.get("page", None)
 
-    cur = get_db().execute("SELECT Post.ID AS id, Animal.ID AS animal_id, Animal.name AS animal_name, Animal.image_url AS animalicon_url, Animal.zooID as zoo_id, Zoo.name AS zoo_name, Post.image_url AS image_url, Post.description AS description, created AS created_at FROM Animal, Post, Zoo WHERE Animal.ID = Post.animalID AND Animal.zooID = Zoo.ID;")
+    cur = get_db().execute("SELECT Post.ID AS id, Animal.ID AS animal_id, Animal.name AS animal_name, Animal.image_url AS animalicon_url, Animal.zooID as zoo_id, Zoo.name AS zoo_name, Post.image_url AS image_url, Post.description AS description, created AS created_at FROM Animal, Post, Zoo WHERE Animal.ID = Post.animalID AND Animal.zooID = Zoo.ID LIMIT 24 OFFSET "+ str(24*int(page)) +";")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
@@ -786,8 +791,9 @@ def getUser(user_id):
 @app.route('/users/<int:user_id>/fans', methods=['GET'])
 def getUserFans(user_id):
     response = []
+    page = request.args.get("page", None)
 
-    cur = get_db().execute("SELECT animalID AS id, Animal.name AS name, Animal.image_url AS icon_url, Zoo.name AS zoo_name FROM User, UserFanAnimal, Animal, Zoo WHERE Animal.ID = UserFanAnimal.animalID AND User.ID = UserFanAnimal.userID AND Zoo.ID = Animal.zooID AND User.ID = "+str(user_id)+";")
+    cur = get_db().execute("SELECT animalID AS id, Animal.name AS name, Animal.image_url AS icon_url, Zoo.name AS zoo_name FROM User, UserFanAnimal, Animal, Zoo WHERE Animal.ID = UserFanAnimal.animalID AND User.ID = UserFanAnimal.userID AND Zoo.ID = Animal.zooID AND User.ID = "+str(user_id)+" LIMIT 8 OFFSET "+str(8*int(page))+";")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
@@ -802,8 +808,9 @@ def getUserFans(user_id):
 @app.route('/users/<int:user_id>/zoos', methods=['GET'])
 def getUserFansZoos(user_id):
     response = []
+    page = request.args.get("page", None)
 
-    cur = get_db().execute("SELECT zooID AS id, name, image_url FROM UserFanZoo, Zoo WHERE userID = " + str(user_id) + " AND UserFanZoo.zooID = Zoo.ID;")
+    cur = get_db().execute("SELECT zooID AS id, name, image_url FROM UserFanZoo, Zoo WHERE userID = " + str(user_id) + " AND UserFanZoo.zooID = Zoo.ID LIMIT 8 OFFSET "+ str(8*int(page))+";")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
