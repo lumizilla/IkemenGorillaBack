@@ -33,7 +33,7 @@ if os.path.exists("csvfiles/vote.csv"):
   os.remove("csvfiles/vote.csv")
 if os.path.exists("csvfiles/post.csv"):
   os.remove("csvfiles/post.csv")
-  
+
 #creating csv for table support
 with open('csvfiles/support.csv', mode='w') as baseFile:
     csvWriter = csv.writer(baseFile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
@@ -45,7 +45,6 @@ with open('csvfiles/support.csv', mode='w') as baseFile:
         sponsorNumber = randint(1, int(nsponallowed)+1)
         #list of all sponsor ids
         sponsors = list(range(1, int(nsponsors)+1))
-        print(sponsors)
         for sponsor in range(1, sponsorNumber):
             chosenSponsor = random.choice(sponsors)
             #writing rows to csv
@@ -105,9 +104,9 @@ with open('csvfiles/entry.csv', mode='w') as baseFile:
     csvWriter.writerow(['placement', 'created', 'contestID', 'animalID', 'award'])
 
     nentries = int(nanimals) + 1;
-    while(nentries > int(nanimals)):
+    while(int(nentries) > int(nanimals)):
         nentries = input("---> How many maximum entries allowed for a contest? (must be less than total animals)")
-        if(nentries > int(nanimals)):
+        if(int(nentries) > int(nanimals)):
             print("entries was more than the total animals")
 
     #random entries for this contest
@@ -127,19 +126,19 @@ with open('csvfiles/vote.csv', mode='w') as baseFile:
     csvWriter.writerow(['entryID', 'userID', 'count', 'lastVoted'])
 
     nmaxusers = int(nusers)+1
-    while(nmaxusers > int(nusers)):
-        nentries = input("---> How many maximum users allowed to vote for entry? (must be less than total users)")
-        if(nmaxusers > int(nusers)):
+    while(int(nmaxusers) > int(nusers)):
+        nmaxusers = input("---> How many maximum users allowed to vote for entry? (must be less than total users)")
+        if(int(nmaxusers) > int(nusers)):
             print("max users was more than the total users")
 
     for entry in range(1, totalentries+1):
         #number of users who voted for this entry
-        nusersvoted = randint(1, nmaxusers)
+        nusersvoted = randint(1, int(nmaxusers))
         #which users voted
-        userswhovoted = randle.sample(range(1, int(nusers)+1), nusersvoted)
+        userswhovoted = random.sample(range(1, int(nusers)+1), nusersvoted)
         for user in userswhovoted:
             totalvotes = randint(1,100)
-            csvWriter.writerow(entry, user, totalvotes, datetime.today().strftime('%d/%m/%Y'))
+            csvWriter.writerow([entry, user, totalvotes, datetime.today().strftime('%d/%m/%Y')])
 
     print("Created vote.csv")
 
