@@ -101,7 +101,7 @@ def zoosRecommended():
     response = []
 
     #Getting random 8 zoos in a optimized manner
-    cur = get_db().execute("SELECT ID, name, image_url FROM Zoo WHERE ID IN (SELECT ID FROM Zoo ORDER BY RANDOM() LIMIT 8);")
+    cur = get_db().execute("SELECT CAST(ID AS TEXT), name, image_url FROM Zoo WHERE ID IN (SELECT ID FROM Zoo ORDER BY RANDOM() LIMIT 8);")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
@@ -117,7 +117,7 @@ def getContestSponsors(contest_id):
     sponsorIDs = []
 
     #getting sponsor IDs based on contest id
-    cur = get_db().execute("SELECT sponsorID FROM Support WHERE contestID = "+str(contest_id)+";")
+    cur = get_db().execute("SELECT CAST(sponsorID AS TEXT) FROM Support WHERE contestID = "+str(contest_id)+";")
     columns = [column[0] for column in cur.description]
     for row in cur.fetchall():
         sponsorIDs.append(row["sponsorID"])
@@ -147,8 +147,8 @@ def getContestPosts(contest_id):
         #selecting Posts according to contest_id
         #this is a merge of Contest -> Entry -> Zoo/Animal -> Post entities. 
         cur = get_db().execute( \
-            "SELECT p.created AS created_at, p.ID AS id, a.ID AS animal_id, a.name AS animal_name, \
-            a.image_url AS animal_icon_url, p.description, z.ID AS zoo_id, z.name AS zoo_name, p.image_url \
+            "SELECT p.created AS created_at, CAST(p.ID AS TEXT) AS id, CAST(a.ID AS TEXT) AS animal_id, a.name AS animal_name, \
+            a.image_url AS animal_icon_url, p.description, CAST(z.ID AS TEXT) AS zoo_id, z.name AS zoo_name, p.image_url \
                 FROM Entry e, Zoo z, Animal a, Post p WHERE e.animalID = a.ID AND a.zooID = z.ID AND p.animalID = a.ID AND e.contestID = "+str(contest_id)+" \
                 LIMIT 12 OFFSET " + str(12 * int(page)) + ";")
         
@@ -166,7 +166,7 @@ def getContestResults(contest_id):
     response = []
 
     #getting animals and votes of each animal
-    cur = get_db().execute("SELECT a.ID, a.name, a.image_url, SUM(v.count) as number_of_votes \
+    cur = get_db().execute("SELECT CAST(a.ID AS TEXT), a.name, a.image_url, SUM(v.count) as number_of_votes \
         FROM Animal a, Vote v, Entry e \
         WHERE e.animalID = a.ID AND v.entryID = e.ID AND e.contestID = "+str(contest_id)+" \
         GROUP BY a.ID ORDER BY number_of_votes DESC;")
@@ -231,7 +231,7 @@ def zooByID(zoo_id):
     zoo = {}
 
     #getting zoo
-    cur = get_db().execute("SELECT * FROM Zoo WHERE ID = "+str(zoo_id)+";")
+    cur = get_db().execute("SELECT CAST(ID AS TEXT) AS id, name, address, latitude, longitude, image_url, description FROM Zoo WHERE ID = "+str(zoo_id)+";")
     columns = [column[0] for column in cur.description]
     zoo = dict(zip(columns, cur.fetchone()))
     
@@ -263,8 +263,8 @@ def zooPosts(zoo_id):
 
     #selecting Posts according to zoo_id
     cur = get_db().execute( \
-        "SELECT p.created AS created_at, p.ID AS id, a.ID AS animal_id, a.name AS animal_name, \
-        a.image_url AS animal_icon_url, p.description, z.ID AS zoo_id, z.name AS zoo_name, p.image_url \
+        "SELECT p.created AS created_at, CAST(p.ID AS TEXT) AS id, CAST(a.ID AS TEXT) AS animal_id, a.name AS animal_name, \
+        a.image_url AS animal_icon_url, p.description, CAST(z.ID AS TEXT) AS zoo_id, z.name AS zoo_name, p.image_url \
             FROM Zoo z, Animal a, Post p WHERE a.zooID = z.ID AND p.animalID = a.ID AND z.ID = "+str(zoo_id)+" \
             LIMIT 12 OFFSET " + str(12*int(page)) + ";")
 
@@ -284,7 +284,7 @@ def animalContests(animal_id):
 
     #finding all the contests which Entries have animal_id
     contests = []
-    cur = get_db().execute("SELECT e.contestID FROM Entry e WHERE e.animalID ="+str(animal_id)+";")
+    cur = get_db().execute("SELECT CAST(e.contestID AS TEXT) AS contestID FROM Entry e WHERE e.animalID ="+str(animal_id)+";")
     columns = [column[0] for column in cur.description]
     for row in cur.fetchall():
         contests.append(row["contestID"])
@@ -292,7 +292,7 @@ def animalContests(animal_id):
 
     #getting the entire contests
     response = []    
-    cur = get_db().execute("SELECT * FROM Contest WHERE ID IN ("+str(contests).strip('[]')+");")
+    cur = get_db().execute("SELECT CAST(id AS TEXT) AS contest_id, name,start,end,catch_copy,image_url FROM Contest WHERE ID IN ("+str(contests).strip('[]')+");")
     columns = [column[0] for column in cur.description]
     for row in cur.fetchall():
         
@@ -428,8 +428,8 @@ def searchPosts():
 
     #searching posts by animal name, zoo name, description, animal species 
     cur = get_db().execute( \
-        "SELECT p.created AS created_at, p.ID AS id, a.ID AS animal_id, a.name AS animal_name, \
-        a.image_url AS animal_icon_url, p.description, z.ID AS zoo_id, z.name AS zoo_name, p.image_url \
+        "SELECT p.created AS created_at, CAST(p.ID AS TEXT) AS id, CAST(a.ID AS TEXT) AS animal_id, a.name AS animal_name, \
+        a.image_url AS animal_icon_url, p.description, CAST(z.ID AS TEXT) AS zoo_id, z.name AS zoo_name, p.image_url \
         FROM Zoo z, Animal a, Post p \
         WHERE (a.zooID = z.ID AND p.animalID = a.ID) AND \
         (z.name='"+keyword+"' OR a.name='"+keyword+"' OR a.commonName='"+keyword+"' OR a.species='"+keyword+"' OR p.description LIKE '%"+keyword+"%') \
@@ -460,7 +460,7 @@ def votedContests(user_id):
 
     #getting the entire contests
     response = []    
-    cur = get_db().execute("SELECT * FROM Contest WHERE ID IN ("+str(contests).strip('[]')+");")
+    cur = get_db().execute("SELECT CAST(id AS TEXT) AS id, name, start, end, catch_copy, image_url FROM Contest WHERE ID IN ("+str(contests).strip('[]')+");")
     columns = [column[0] for column in cur.description]
     for row in cur.fetchall():
         
@@ -550,7 +550,7 @@ def contests():
     status = request.args.get("status", None)
     page = request.args.get("page", None)
 
-    cur = get_db().execute("SELECT * FROM Contest LIMIT 8 OFFSET " + str(8*int(page)) +  ";")
+    cur = get_db().execute("SELECT Cast(id AS TEXT) AS id, name,start, end, catch_copy, image_url FROM Contest LIMIT 8 OFFSET " + str(8*int(page)) +  ";")
     #cur = get_db().execute("SELECT * FROM Contest;")
     #contestinfo = cur.fetchall()
 
@@ -559,7 +559,10 @@ def contests():
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
-        response.append(dict(zip(columns, row)))
+        d = dict(zip(columns, row))
+        d["status"] = status
+        response.append(d)
+
    
     cur.close()
 
@@ -579,13 +582,15 @@ def contests():
 @app.route('/contests/<int:contest_id>', methods=['GET'])
 def getContest(contest_id):
     response = {}
+    status = request.args.get("status", None)
 
-    cur = get_db().execute("SELECT * FROM Contest WHERE ID = "+str(contest_id)+";")
+    cur = get_db().execute("SELECT Cast(id AS TEXT) AS id, name, image_url, start, end, catch_copy, description FROM Contest WHERE ID = "+str(contest_id)+";")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
         #response.append(dict(zip(columns, row)))
         response = dict(zip(columns, row))
+        response["status"] = status
    
     cur.close()
 
@@ -628,7 +633,7 @@ def getContestAnimal(contest_id):
     # Retrieve url parameters
     page = request.args.get("page", None)
 
-    cur = get_db().execute("SELECT animalID AS animal_id, Animal.name, Animal.image_url AS icon_url, Zoo.name AS zoo_name FROM Entry, Animal, Zoo WHERE contestID = "+str(contest_id)+" AND Entry.animalID = Animal.ID AND Animal.ZooID = Zoo.id LIMIT 8 OFFSET " + str(8*int(page)) + ";")
+    cur = get_db().execute("SELECT CAST(animalID AS TEXT) AS animal_id, Animal.name, Animal.image_url AS icon_url, Zoo.name AS zoo_name FROM Entry, Animal, Zoo WHERE contestID = "+str(contest_id)+" AND Entry.animalID = Animal.ID AND Animal.ZooID = Zoo.id LIMIT 8 OFFSET " + str(8*int(page)) + ";")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
@@ -643,7 +648,7 @@ def getContestAnimal(contest_id):
 def getContestAwards(contest_id):
     response = []
 
-    cur = get_db().execute("SELECT animalID as animal_id, Animal.name as animal_name, Animal.image_url AS icon_url, award AS award_name FROM Entry, Animal WHERE contestID = "+str(contest_id)+" AND Entry.animalID = Animal.ID;")
+    cur = get_db().execute("SELECT CAST(animalID AS TEXT) as animal_id, Animal.name as animal_name, Animal.image_url AS icon_url, award AS award_name FROM Entry, Animal WHERE contestID = "+str(contest_id)+" AND Entry.animalID = Animal.ID;")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
@@ -659,7 +664,7 @@ def getContestAwards(contest_id):
 def getContestAnimalPage(contest_id, animal_id):
     response = {}
 
-    cur = get_db().execute("SELECT animalID AS animal_id, Animal.name AS annimal_name, Animal.image_url AS animal_icon_url, description FROM Animal, Entry WHERE Animal.id = Entry.animalID AND Animal.id = "+str(animal_id)+" AND Entry.contestID = "+str(contest_id)+";")
+    cur = get_db().execute("SELECT CAST(animalID AS TEXT) AS animal_id, Animal.name AS animal_name, Animal.image_url AS animal_icon_url, description FROM Animal, Entry WHERE Animal.ID = Entry.animalID AND Animal.ID = "+str(animal_id)+" AND Entry.contestID = "+str(contest_id)+";")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
@@ -667,14 +672,16 @@ def getContestAnimalPage(contest_id, animal_id):
         response = dict(zip(columns, row))
     cur.close()
 
-    cur = get_db().execute("SELECT Zoo.ID AS zoo_id, Zoo.name AS zoo_name, address AS zoo_address FROM Zoo,Animal WHERE Zoo.ID = Animal.zooID AND Animal.ID = "+str(animal_id)+";")
-    columns = [column[0] for column in cur.description]
     subresponse = {}
+    cur = get_db().execute("SELECT CAST(Zoo.ID AS TEXT) AS zoo_id, Zoo.name AS zoo_name, address AS zoo_address FROM Zoo, Animal WHERE Zoo.ID = Animal.zooID AND Animal.ID = "+str(animal_id)+";")
+    columns = [column[0] for column in cur.description]
     for row in cur.fetchall():
         #response.append(dict(zip(columns, row)))
         subresponse = dict(zip(columns, row))
     response["is_voted_today"] = False
     cur.close()
+
+    response.update(subresponse)
 
     return jsonify(response)
 
@@ -684,7 +691,7 @@ def getContestAnimalPage(contest_id, animal_id):
 def getZoos():
     response = []
 
-    cur = get_db().execute("SELECT ID AS id, name, address, latitude, longitude, image_url FROM Zoo;")
+    cur = get_db().execute("SELECT CAST(ID AS TEXT) AS id, name, address, latitude, longitude, image_url FROM Zoo;")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
@@ -700,7 +707,7 @@ def getZooAnimals(zoo_id):
     response = []
     page = request.args.get("page", None)
 
-    cur = get_db().execute("SELECT Animal.ID AS id, Animal.name, Animal.image_url AS icon_url FROM Animal, Zoo WHERE Zoo.ID = "+str(zoo_id)+" AND Animal.ZooID = Zoo.id LIMIT 8 OFFSET "+ str(8*int(page)) +";")
+    cur = get_db().execute("SELECT CAST(Animal.ID AS TEXT) AS id, Animal.name, Animal.image_url AS icon_url FROM Animal, Zoo WHERE Zoo.ID = "+str(zoo_id)+" AND Animal.ZooID = Zoo.id LIMIT 8 OFFSET "+ str(8*int(page)) +";")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
@@ -717,7 +724,7 @@ def getZooAnimals(zoo_id):
 def getAnimalPage(animal_id):
     response = {}
 
-    cur = get_db().execute("SELECT ID AS id, name, image_url AS icon_url, sex, birthday, description, Zoo.name AS zoo_name FROM Animal, Zoo WHERE Animal.zooID = Aoo.id AND Animal.id = "+str(animal_id)+";")
+    cur = get_db().execute("SELECT CAST(ID AS TEXT) AS id, name, image_url AS icon_url, sex, birthday, description, Zoo.name AS zoo_name FROM Animal, Zoo WHERE Animal.zooID = Aoo.id AND Animal.id = "+str(animal_id)+";")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
@@ -746,7 +753,7 @@ def getAnimalPosts(animal_id):
     response = []
     page = request.args.get("page", None)
 
-    cur = get_db().execute("SELECT Post.ID AS id, Animal.ID AS animal_id, Animal.name AS animal_name, Animal.image_url AS animalicon_url, Animal.zooID as zoo_id, Zoo.name AS zoo_name, Post.image_url AS image_url, Post.description AS description, created AS created_at FROM Animal, Post, Zoo WHERE Animal.ID = Post.animalID AND Animal.zooID = Zoo.ID AND Animal.id = "+str(animal_id)+" LIMIT 8 OFFSET " + str(8*int(page)) + ";")
+    cur = get_db().execute("SELECT CAST(Post.ID AS TEXT) AS id, CAST(Animal.ID AS TEXT) AS animal_id, Animal.name AS animal_name, Animal.image_url AS animalicon_url, CAST(Animal.zooID AS TEXT) as zoo_id, Zoo.name AS zoo_name, Post.image_url AS image_url, Post.description AS description, created AS created_at FROM Animal, Post, Zoo WHERE Animal.ID = Post.animalID AND Animal.zooID = Zoo.ID AND Animal.id = "+str(animal_id)+" LIMIT 8 OFFSET " + str(8*int(page)) + ";")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
@@ -762,7 +769,7 @@ def getPosts():
     response = []
     page = request.args.get("page", None)
 
-    cur = get_db().execute("SELECT Post.ID AS id, Animal.ID AS animal_id, Animal.name AS animal_name, Animal.image_url AS animalicon_url, Animal.zooID as zoo_id, Zoo.name AS zoo_name, Post.image_url AS image_url, Post.description AS description, created AS created_at FROM Animal, Post, Zoo WHERE Animal.ID = Post.animalID AND Animal.zooID = Zoo.ID LIMIT 24 OFFSET "+ str(24*int(page)) +";")
+    cur = get_db().execute("SELECT CAST(Post.ID AS TEXT) AS id, CAST(Animal.ID AS TEXT) AS animal_id, Animal.name AS animal_name, Animal.image_url AS animalicon_url, CAST(Animal.zooID AS TEXT) as zoo_id, Zoo.name AS zoo_name, Post.image_url AS image_url, Post.description AS description, created AS created_at FROM Animal, Post, Zoo WHERE Animal.ID = Post.animalID AND Animal.zooID = Zoo.ID LIMIT 24 OFFSET "+ str(24*int(page)) +";")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
@@ -777,7 +784,7 @@ def getPosts():
 def getUser(user_id):
     response = {}
 
-    cur = get_db().execute("SELECT ID AS id, name, image_url AS icon_url, profile AS description FROM User WHERE ID = " + str(user_id) + ";")
+    cur = get_db().execute("SELECT CAST(ID AS TEXT) AS id, name, image_url AS icon_url, profile AS description FROM User WHERE ID = " + str(user_id) + ";")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
@@ -793,7 +800,7 @@ def getUserFans(user_id):
     response = []
     page = request.args.get("page", None)
 
-    cur = get_db().execute("SELECT animalID AS id, Animal.name AS name, Animal.image_url AS icon_url, Zoo.name AS zoo_name FROM User, UserFanAnimal, Animal, Zoo WHERE Animal.ID = UserFanAnimal.animalID AND User.ID = UserFanAnimal.userID AND Zoo.ID = Animal.zooID AND User.ID = "+str(user_id)+" LIMIT 8 OFFSET "+str(8*int(page))+";")
+    cur = get_db().execute("SELECT CAST(animalID AS TEXT) AS id, Animal.name AS name, Animal.image_url AS icon_url, Zoo.name AS zoo_name FROM User, UserFanAnimal, Animal, Zoo WHERE Animal.ID = UserFanAnimal.animalID AND User.ID = UserFanAnimal.userID AND Zoo.ID = Animal.zooID AND User.ID = "+str(user_id)+" LIMIT 8 OFFSET "+str(8*int(page))+";")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
@@ -810,7 +817,7 @@ def getUserFansZoos(user_id):
     response = []
     page = request.args.get("page", None)
 
-    cur = get_db().execute("SELECT zooID AS id, name, image_url FROM UserFanZoo, Zoo WHERE userID = " + str(user_id) + " AND UserFanZoo.zooID = Zoo.ID LIMIT 8 OFFSET "+ str(8*int(page))+";")
+    cur = get_db().execute("SELECT CAST(zooID AS TEXT) AS id, name, image_url FROM UserFanZoo, Zoo WHERE userID = " + str(user_id) + " AND UserFanZoo.zooID = Zoo.ID LIMIT 8 OFFSET "+ str(8*int(page))+";")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
