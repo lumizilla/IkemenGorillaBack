@@ -16,7 +16,7 @@ def get_db():
     return db
 
 print("Starting creating csv files...")
-
+'''
 ncontests = input("---> How many contests exist? ")
 nsponsors = input("---> How many sponsors exist? ")
 
@@ -141,7 +141,7 @@ with open('csvfiles/vote.csv', mode='w') as baseFile:
             csvWriter.writerow([entry, user, totalvotes, datetime.today().strftime('%d/%m/%Y')])
 
     print("Created vote.csv")
-
+'''
 #creating csv for table post
 with open('csvfiles/post.csv', mode='w') as baseFile:
     csvWriter = csv.writer(baseFile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
