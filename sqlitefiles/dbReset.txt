@@ -42,6 +42,7 @@ CREATE TABLE Zookeeper (
 CREATE TABLE Animal (
   ID INTEGER PRIMARY KEY,
   name varchar(30) DEFAULT NULL,
+  commonName varchar(30) DEFAULT NULL,
   species varchar(30) DEFAULT NULL,
   sex varchar(30) DEFAULT NULL,
   birthday TEXT DEFAULT NULL,

@@ -432,7 +432,7 @@ def searchPosts():
         a.image_url AS animal_icon_url, p.description, z.ID AS zoo_id, z.name AS zoo_name, p.image_url \
         FROM Zoo z, Animal a, Post p \
         WHERE (a.zooID = z.ID AND p.animalID = a.ID) AND \
-        (z.name='"+keyword+"' OR a.name='"+keyword+"' OR a.species='"+keyword+"' OR p.description LIKE '%"+keyword+"%') \
+        (z.name='"+keyword+"' OR a.name='"+keyword+"' OR a.commonName='"+keyword+"' OR a.species='"+keyword+"' OR p.description LIKE '%"+keyword+"%') \
         LIMIT 24;")
     
     columns = [column[0] for column in cur.description]

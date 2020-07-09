@@ -44,7 +44,7 @@ else:
 
 		if(table == "animal"):
 			cursor = get_db()
-			cursor.executemany("INSERT INTO 'Animal' ('name', 'species', 'sex', 'birthday', 'image_url', 'description','zooID') VALUES (?,?,?,?,?,?,?)", data)
+			cursor.executemany("INSERT INTO 'Animal' ('name', 'commonName','species', 'sex', 'birthday', 'image_url', 'description','zooID') VALUES (?,?,?,?,?,?,?,?)", data)
 			cursor.commit()
 			cursor.close()
 
