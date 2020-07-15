@@ -16,7 +16,7 @@ def get_db():
     return db
 
 print("Starting creating csv files...")
-'''
+
 ncontests = input("---> How many contests exist? ")
 nsponsors = input("---> How many sponsors exist? ")
 
@@ -141,8 +141,9 @@ with open('csvfiles/vote.csv', mode='w') as baseFile:
             csvWriter.writerow([entry, user, totalvotes, datetime.today().strftime('%d/%m/%Y')])
 
     print("Created vote.csv")
-'''
+
 #creating csv for table post
+
 with open('csvfiles/post.csv', mode='w') as baseFile:
     csvWriter = csv.writer(baseFile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
     csvWriter.writerow(['image_url', 'created', 'description', 'animalID', 'zookeeperID'])
@@ -159,7 +160,7 @@ with open('csvfiles/post.csv', mode='w') as baseFile:
         animalID = cursor.execute("SELECT ID FROM Animal WHERE commonName ='"+row[0]+"'").fetchone()
         if(animalID != None):
             for i in range(1, len(row)):
-                if(row[i] != None):
+                if(row[i] != None and row[i] != ""):
                     csvWriter.writerow([row[i], datetime.today().strftime('%d/%m/%Y'), row[0], animalID[0], 0])
         else:
             print("no animal named "+row[0]+ " found.")
