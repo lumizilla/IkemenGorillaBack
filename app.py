@@ -125,7 +125,7 @@ def getContestSponsors(contest_id):
     cur.close()
     
     #getting all information about each sponsor
-    cur = get_db().execute("SELECT * FROM Sponsor WHERE ID IN ("+str(sponsorIDs).strip('[]')+");")
+    cur = get_db().execute("SELECT ID as id, name, image_url, website_url FROM Sponsor WHERE ID IN ("+str(sponsorIDs).strip('[]')+");")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
@@ -167,7 +167,7 @@ def getContestResults(contest_id):
     response = []
 
     #getting animals and votes of each animal
-    cur = get_db().execute("SELECT CAST(a.ID AS TEXT) as animal_id, a.name, a.image_url, SUM(v.count) as number_of_votes \
+    cur = get_db().execute("SELECT CAST(a.ID AS TEXT) as animal_id, a.name as animal_name, a.image_url, SUM(v.count) as number_of_votes \
         FROM Animal a, Vote v, Entry e \
         WHERE e.animalID = a.ID AND v.entryID = e.ID AND e.contestID = "+str(contest_id)+" \
         GROUP BY a.ID ORDER BY number_of_votes DESC;")
