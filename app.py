@@ -495,8 +495,8 @@ def favoriteZoo(zoo_id):
     
     response = {}
 
-    #proper way to receive parameters in POST
-    user = request.form.get('user_id')
+    user = request.args.get('user_id')
+
     cur = get_db().execute("SELECT * FROM 'UserFanZoo' WHERE userID="+str(user)+" AND zooID="+str(zoo_id)+";")
     fan = cur.fetchone()
     if(fan == None):
@@ -520,10 +520,10 @@ def favoriteAnimal(animal_id):
     
     response = {}
 
-    #proper way to receive parameters in POST
-    user = request.form.get('user_id')
+    user = request.args.get('user_id')
 
-    cur = get_db().execute("SELECT * FROM 'UserFanAnimal' WHERE userID="+str(user)+" AND animalID="+str(animal_id)+";")
+
+    cur = get_db().execute("SELECT * FROM UserFanAnimal WHERE UserFanAnimal.userID = "+str(user)+" AND UserFanAnimal.animalID = "+str(animal_id)+";")
     fan = cur.fetchone()
     if(fan == None):
         cur = get_db().execute("INSERT INTO 'UserFanAnimal'('userID', 'animalID') VALUES ("+str(user)+", "+str(animal_id)+");")
@@ -740,7 +740,9 @@ def getZooAnimals(zoo_id):
 def getAnimalPage(animal_id):
     response = {}
 
-    cur = get_db().execute("SELECT CAST(ID AS TEXT) AS id, name, image_url AS icon_url, sex, birthday, description, Zoo.name AS zoo_name FROM Animal, Zoo WHERE Animal.zooID = Aoo.id AND Animal.id = "+str(animal_id)+";")
+    userID = request.args.get("user_id", None)
+
+    cur = get_db().execute("SELECT CAST(Animal.ID AS TEXT) AS id, Animal.name, Animal.image_url AS icon_url, Animal.sex, Animal.birthday, Animal.description, Zoo.name AS zoo_name FROM Animal, Zoo WHERE Animal.zooID = Zoo.ID AND Animal.ID = "+str(animal_id)+";")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
@@ -754,11 +756,20 @@ def getAnimalPage(animal_id):
 
     for row in cur.fetchall():
         #response.append(dict(zip(columns, row)))
-        response = dict(zip(columns, row))
+        response.update(dict(zip(columns, row)))
     cur.close()
 
-    response["is_fan"] = False
+    cur = get_db().execute("SELECT COUNT(*) AS count FROM UserFanAnimal WHERE animalID = "+str(animal_id)+" AND userID = "+userID+";")
+    columns = [column[0] for column in cur.description]
 
+    res = dict(zip(columns, cur.fetchone()))
+
+    if (res["count"] != 0):
+        response["is_fan"] = True
+    else:
+        response["is_fan"] = False
+
+    cur.close()
 
     return jsonify(response)
 
