@@ -125,7 +125,7 @@ def getContestSponsors(contest_id):
     cur.close()
     
     #getting all information about each sponsor
-    cur = get_db().execute("SELECT ID as id, name, image_url, website_url FROM Sponsor WHERE ID IN ("+str(sponsorIDs).strip('[]')+");")
+    cur = get_db().execute("SELECT CAST(ID AS TEXT) as id, name, image_url, website_url FROM Sponsor WHERE ID IN ("+str(sponsorIDs).strip('[]')+");")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
