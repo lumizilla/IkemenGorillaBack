@@ -448,6 +448,7 @@ def searchPosts():
 @app.route('/users/<int:user_id>/contests', methods=['GET'])
 def votedContests(user_id):
     page = request.args.get("page", None)
+
     #finding all the contests which Entries were voted for by user
     contests = []
     cur = get_db().execute("SELECT e.contestID FROM Entry e, Vote v \
@@ -459,7 +460,7 @@ def votedContests(user_id):
 
     #getting the entire contests
     response = []    
-    cur = get_db().execute("SELECT CAST(id AS TEXT) AS id, name, start, end, catch_copy, image_url FROM Contest WHERE ID IN ("+str(contests).strip('[]')+");")
+    cur = get_db().execute("SELECT CAST(id AS TEXT) AS id, name, start, end, catch_copy, image_url FROM Contest WHERE ID IN ("+str(contests).strip('[]')+") LIMIT 8 OFFSET " + str(8*int(page)) + ";")
     columns = [column[0] for column in cur.description]
     for row in cur.fetchall():
         
