@@ -167,7 +167,7 @@ def getContestResults(contest_id):
     response = []
 
     #getting animals and votes of each animal
-    cur = get_db().execute("SELECT CAST(a.ID AS TEXT) as animal_id, a.name as animal_name, a.image_url, SUM(v.count) as number_of_votes \
+    cur = get_db().execute("SELECT CAST(a.ID AS TEXT) as animal_id, a.name as animal_name, a.image_url as icon_url, SUM(v.count) as number_of_votes \
         FROM Animal a, Vote v, Entry e \
         WHERE e.animalID = a.ID AND v.entryID = e.ID AND e.contestID = "+str(contest_id)+" \
         GROUP BY a.ID ORDER BY number_of_votes DESC;")
@@ -447,7 +447,7 @@ def searchPosts():
 #TODO limit 8 contests AND add paging
 @app.route('/users/<int:user_id>/contests', methods=['GET'])
 def votedContests(user_id):
-
+    page = request.args.get("page", None)
     #finding all the contests which Entries were voted for by user
     contests = []
     cur = get_db().execute("SELECT e.contestID FROM Entry e, Vote v \
