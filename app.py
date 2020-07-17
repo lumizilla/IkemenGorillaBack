@@ -291,7 +291,7 @@ def animalContests(animal_id):
 
     #getting the entire contests
     response = []    
-    cur = get_db().execute("SELECT CAST(id AS TEXT) AS contest_id, name,start,end,catch_copy,image_url FROM Contest WHERE ID IN ("+str(contests).strip('[]')+");")
+    cur = get_db().execute("SELECT CAST(id AS TEXT) as id, name,start,end,catch_copy,image_url FROM Contest WHERE ID IN ("+str(contests).strip('[]')+");")
     columns = [column[0] for column in cur.description]
     for row in cur.fetchall():
         
