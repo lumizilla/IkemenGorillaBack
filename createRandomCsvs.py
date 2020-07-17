@@ -23,6 +23,7 @@ nsponsors = input("---> How many sponsors exist? ")
 #removing files if they already exist
 if os.path.exists("csvfiles/support.csv"):
   os.remove("csvfiles/support.csv")
+
 if os.path.exists("csvfiles/userfanzoo.csv"):
   os.remove("csvfiles/userfanzoo.csv")
 if os.path.exists("csvfiles/userfananimal.csv"):
@@ -34,15 +35,16 @@ if os.path.exists("csvfiles/vote.csv"):
 if os.path.exists("csvfiles/post.csv"):
   os.remove("csvfiles/post.csv")
 
+
 #creating csv for table support
 with open('csvfiles/support.csv', mode='w') as baseFile:
     csvWriter = csv.writer(baseFile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
     csvWriter.writerow(['sponsorID', 'contestID'])
-    nsponallowed = input("---> How many sponsors are allowed per contest? (cant be less than number of contests) ")
-
+    nsponallowed = input("---> How many maximum sponsors are allowed per contest?")
+    minSpon = input("---> Each contest should have at least how many sponsors? (cant be more than the number in the previous question) ")
     for contestID in range(1,int(ncontests)+1):
         #max sponsors allowed is 5, min 1
-        sponsorNumber = randint(1, int(nsponallowed)+1)
+        sponsorNumber = randint(int(minSpon), int(nsponallowed)+1)
         #list of all sponsor ids
         sponsors = list(range(1, int(nsponsors)+1))
         for sponsor in range(1, sponsorNumber):
