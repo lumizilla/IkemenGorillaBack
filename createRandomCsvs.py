@@ -23,7 +23,6 @@ nsponsors = input("---> How many sponsors exist? ")
 #removing files if they already exist
 if os.path.exists("csvfiles/support.csv"):
   os.remove("csvfiles/support.csv")
-
 if os.path.exists("csvfiles/userfanzoo.csv"):
   os.remove("csvfiles/userfanzoo.csv")
 if os.path.exists("csvfiles/userfananimal.csv"):
