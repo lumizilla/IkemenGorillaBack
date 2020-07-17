@@ -505,13 +505,15 @@ def favoriteZoo(zoo_id):
 
         if(cur.lastrowid == "" or cur.lastrowid == None):
             response["error"] = "Insert in table failed."
+            response["result"] = "false"
             cur.close()
             return jsonify(response)
         else:
-            response["result"] = "ok"
+            response["result"] = "true"
             cur.close()
             return jsonify(response)
     else:
+        response["result"] = "false"
         response["error"] = "User is already fan of this zoo."
         return jsonify(response)
 
@@ -531,13 +533,15 @@ def favoriteAnimal(animal_id):
 
         if(cur.lastrowid == "" or cur.lastrowid == None):
             response["error"] = "Insert in table failed."
+            response["result"] = "false"
             cur.close()
             return jsonify(response)
         else:
-            response["result"] = "ok"
+            response["result"] = "true"
             cur.close()
             return jsonify(response)
     else:
+        response["result"] = "false"
         response["error"] = "User is already fan of this animal."
         return jsonify(response)
 
@@ -855,56 +859,71 @@ def getUserFansZoos(user_id):
     return jsonify(response)
 
 
-@app.route('/zoos/<int:zoo_id>/favorite', methods=['POST'])
+@app.route('/zoos/<int:zoo_id>/favorite', methods=['DELETE'])
 def favoriteZooDelete(zoo_id):
     
     response = {}
 
     #proper way to receive parameters in POST
-    user = request.form.get('user_id')
+    user = request.args.get('user_id')
     cur = get_db().execute("SELECT * FROM 'UserFanZoo' WHERE userID="+str(user)+" AND zooID="+str(zoo_id)+";")
     fan = cur.fetchone()
+    cur.close()
+
     if(fan != None):
         cur = get_db().execute("DELETE FROM UserFanZoo WHERE userID = "+ str(user) +" AND zooID = "+ str(zooID)+";")
         get_db().commit()
+        cur.close()
 
-        if(cur.lastrowid == "" or cur.lastrowid == None):
+        cur = get_db().execute("SELECT * FROM 'UserFanAnimal' WHERE userID="+str(user)+" AND animalID="+str(animal_id)+";")
+        fan = cur.fetchone()
+
+        if(fan != None):
             response["error"] = "Delete failed."
+            response["result"] = "false"
             cur.close()
             return jsonify(response)
         else:
-            response["result"] = "ok"
+            response["result"] = "true"
             cur.close()
             return jsonify(response)
     else:
         response["error"] = "User is not fan of this zoo."
+        response["result"] = "false"
         return jsonify(response)
 
 
-@app.route('/animals/<int:animal_id>/fan', methods=['POST'])
+@app.route('/animals/<int:animal_id>/fan', methods=['DELETE'])
 def favoriteAnimalDelete(animal_id):
     
     response = {}
 
     #proper way to receive parameters in POST
-    user = request.form.get('user_id')
+    user = request.args.get('user_id')
 
     cur = get_db().execute("SELECT * FROM 'UserFanAnimal' WHERE userID="+str(user)+" AND animalID="+str(animal_id)+";")
     fan = cur.fetchone()
+    cur.close()
     if(fan != None):
         cur = get_db().execute("DELETE FROM UserFanAnimal WHERE userID = "+ str(user) +" AND animalID = "+ str(animal_id)+";")
         get_db().commit()
+        cur.close()
 
-        if(cur.lastrowid == "" or cur.lastrowid == None):
+        cur = get_db().execute("SELECT * FROM 'UserFanAnimal' WHERE userID="+str(user)+" AND animalID="+str(animal_id)+";")
+        fan = cur.fetchone()
+
+        if(fan != None):
             response["error"] = "Delete failed."
+            response["result"] = "false"
             cur.close()
             return jsonify(response)
         else:
-            response["result"] = "ok"
+            response["result"] = "true"
             cur.close()
             return jsonify(response)
     else:
         response["error"] = "User is not fan of this animal."
+        response["result"] = "false"
         return jsonify(response)
 
 #-------------------------------------------------------------
