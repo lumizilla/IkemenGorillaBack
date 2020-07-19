@@ -377,7 +377,8 @@ def vote(contest_id):
     animal = request.form.get('animal_id')
     
     if(user == None or user=="" or animal =="" or animal == None):
-        response["result"] = "error: user id or animal id missing."
+        response["result"] = "false"
+        response["error"] = "error: user id or animal id missing."
         return jsonify(response)
 
     #selecting the Entry related to the vote
@@ -395,12 +396,13 @@ def vote(contest_id):
             cur2 = get_db().execute("INSERT INTO 'Vote'('entryID', 'userID', 'count', 'lastVoted') VALUES ('"+str(entry["ID"])+"','"+str(user)+"', 1, '"+datetime.today().strftime('%d/%m/%Y')+"');")
             get_db().commit()
             cur2.close()
-            response["result"] = "ok"
+            response["result"] = "true"
         #else increase the count
         else:
             #test if user already voted 
             if(vote['lastVoted'] == datetime.today().strftime('%d/%m/%Y')):
-                response["result"] = "error: already voted"
+                response["result"] = "false"
+                response["error"] = "error: already voted"
             else:
                 voteID = str(vote['ID'])
                 voteCount = vote['count'] + 1;
@@ -408,12 +410,13 @@ def vote(contest_id):
                     WHERE ID = "+voteID+";")
                 get_db().commit()
                 cur2.close()
-                response["result"] = "ok"
+                response["result"] = "true"
 
         cur1.close()
 
     else:
-        response["result"] = "error: entry related to this vote doesnt exist"
+        response["result"] = "false"
+        response["error"] = "error: entry related to this vote doesnt exist"
     cur.close()
 
     return jsonify(response)
