@@ -854,7 +854,7 @@ def getUserFansZoos(user_id):
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
-        response = dict(zip(columns, row))
+        response.append(dict(zip(columns, row)))
     cur.close()
 
     return jsonify(response)
