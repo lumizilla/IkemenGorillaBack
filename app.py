@@ -867,7 +867,6 @@ def favoriteZooDelete(zoo_id):
     
     response = {}
 
-    #proper way to receive parameters in POST
     user = request.args.get('user_id')
     cur = get_db().execute("SELECT * FROM 'UserFanZoo' WHERE userID="+str(user)+" AND zooID="+str(zoo_id)+";")
     fan = cur.fetchone()
