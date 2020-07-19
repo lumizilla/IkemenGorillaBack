@@ -833,8 +833,7 @@ def getUser(user_id):
 def getUserFans(user_id):
     response = []
     page = request.args.get("page", None)
-
-    cur = get_db().execute("SELECT CAST(animalID AS TEXT) AS id, Animal.name AS name, Animal.image_url AS icon_url, Zoo.name AS zoo_name FROM User, UserFanAnimal, Animal, Zoo WHERE Animal.ID = UserFanAnimal.animalID AND User.ID = UserFanAnimal.userID AND Zoo.ID = Animal.zooID AND User.ID = "+str(user_id)+" LIMIT 8 OFFSET "+str(8*int(page))+";")
+    cur = get_db().execute("SELECT CAST(Animal.ID AS TEXT) AS id, Animal.name AS name, Animal.image_url AS icon_url, Zoo.name AS zoo_name FROM User, UserFanAnimal, Animal, Zoo WHERE Animal.ID = UserFanAnimal.animalID AND User.ID = UserFanAnimal.userID AND Zoo.ID = Animal.zooID AND User.ID = "+str(user_id)+" LIMIT 8 OFFSET "+str(8*int(page))+";")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
@@ -851,11 +850,10 @@ def getUserFansZoos(user_id):
     response = []
     page = request.args.get("page", None)
 
-    cur = get_db().execute("SELECT CAST(zooID AS TEXT) AS id, name, image_url FROM UserFanZoo, Zoo WHERE userID = " + str(user_id) + " AND UserFanZoo.zooID = Zoo.ID LIMIT 8 OFFSET "+ str(8*int(page))+";")
+    cur = get_db().execute("SELECT CAST(Zoo.ID AS TEXT) AS id, name, image_url FROM UserFanZoo, Zoo WHERE userID = " + str(user_id) + " AND UserFanZoo.zooID = Zoo.ID LIMIT 8 OFFSET "+ str(8*int(page))+";")
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
-        #response.append(dict(zip(columns, row)))
         response = dict(zip(columns, row))
     cur.close()
 

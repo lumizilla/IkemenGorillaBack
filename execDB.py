@@ -104,7 +104,7 @@ else:
 
 		elif(table == "userfananimal"):
 			cursor = get_db()
-			cursor.executemany("INSERT INTO 'UserFanAnimal' ('animalID', 'userID') VALUES (?,?)", data)
+			cursor.executemany("INSERT INTO 'UserFanAnimal' ('userID', 'animalID') VALUES (?,?)", data)
 			cursor.commit()
 			cursor.close()
 
