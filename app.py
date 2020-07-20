@@ -548,8 +548,6 @@ def favoriteAnimal(animal_id):
         response["error"] = "User is already fan of this animal."
         return jsonify(response)
 
-#YAMADA
-
 @app.route('/contests', methods=['GET'])
 def contests():
 
@@ -558,29 +556,36 @@ def contests():
     page = request.args.get("page", None)
 
     cur = get_db().execute("SELECT Cast(id AS TEXT) AS id, name,start, end, catch_copy, image_url FROM Contest LIMIT 8 OFFSET " + str(8*int(page)) +  ";")
-    #cur = get_db().execute("SELECT * FROM Contest;")
-    #contestinfo = cur.fetchall()
 
     response = []
 
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
-        d = dict(zip(columns, row))
-        d["status"] = status
-        response.append(d)
+        contest = dict(zip(columns, row))
+
+        startdate = row["start"]
+        enddate = row["end"]
+        format_str = '%d/%m/%Y' # The format
+        startdate_obj = datetime.strptime(startdate, format_str)
+        enddate_obj = datetime.strptime(enddate, format_str)
+        presentdate = datetime.now()
+
+        #test if contest ended
+        if(enddate_obj < presentdate):
+            contest["status"] = "ended"
+        #test it contest is current
+        elif(presentdate < enddate_obj and startdate_obj < presentdate):
+            contest["status"] = "current"
+        #else, contest didnt start yet
+        else:
+            contest["status"] = "upcoming"
+
+        if (contest["status"] == status or status == None or status == ""):
+            response.append(contest)
 
    
     cur.close()
-
-    #CODE
-    #if (status[0] and page[0]):
-        #do code for it
-
-    """
-    if not contestinfo[0]:
-        response["ERROR"] = "test database, found 0 contests"
-    """
 
     return jsonify(response)
 
@@ -595,9 +600,7 @@ def getContest(contest_id):
     columns = [column[0] for column in cur.description]
 
     for row in cur.fetchall():
-        #response.append(dict(zip(columns, row)))
-
-        response = dict(zip(columns, row))
+        contest = dict(zip(columns, row))
 
         startdate = row["start"]
         enddate = row["end"]
@@ -608,15 +611,18 @@ def getContest(contest_id):
 
         #test if contest ended
         if(enddate_obj < presentdate):
-            response["status"] = "ended"
+            contest["status"] = "ended"
         #test it contest is current
         elif(presentdate < enddate_obj and startdate_obj < presentdate):
-            response["status"] = "current"
+            contest["status"] = "current"
         #else, contest didnt start yet
         else:
-            response["status"] = "upcoming"
+            contest["status"] = "upcoming"
 
-   
+        if (contest["status"] == status or status == None or status == ""):
+            response.update(contest)
+        else:
+            return jsonify(response)
     cur.close()
 
     
