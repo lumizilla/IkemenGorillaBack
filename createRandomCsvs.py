@@ -21,12 +21,14 @@ ncontests = input("---> How many contests exist? ")
 nsponsors = input("---> How many sponsors exist? ")
 
 #removing files if they already exist
+'''
 if os.path.exists("csvfiles/support.csv"):
   os.remove("csvfiles/support.csv")
 if os.path.exists("csvfiles/userfanzoo.csv"):
   os.remove("csvfiles/userfanzoo.csv")
 if os.path.exists("csvfiles/userfananimal.csv"):
   os.remove("csvfiles/userfananimal.csv")
+'''
 if os.path.exists("csvfiles/entry.csv"):
   os.remove("csvfiles/entry.csv")
 if os.path.exists("csvfiles/vote.csv"):
@@ -34,7 +36,7 @@ if os.path.exists("csvfiles/vote.csv"):
 if os.path.exists("csvfiles/post.csv"):
   os.remove("csvfiles/post.csv")
 
-
+'''
 #creating csv for table support
 with open('csvfiles/support.csv', mode='w') as baseFile:
     csvWriter = csv.writer(baseFile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
@@ -53,10 +55,10 @@ with open('csvfiles/support.csv', mode='w') as baseFile:
             sponsors.remove(chosenSponsor)
 
     print("Created support.csv")
-
+'''
 nusers =input("---> How many users exist? ")
 nzoos = input("---> How many zoos exist? ")
-
+'''
 #creating csv for table userfanzoo
 with open('csvfiles/userfanzoo.csv', mode='w') as baseFile:
     csvWriter = csv.writer(baseFile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
@@ -75,9 +77,9 @@ with open('csvfiles/userfanzoo.csv', mode='w') as baseFile:
     		zoos.remove(chosenZoo)
 
     print("Created userfanzoo.csv")
-
+'''
 nanimals = input("---> How many animals exist? ")
-
+'''
 #creating csv for table userfananimal
 with open('csvfiles/userfananimal.csv', mode='w') as baseFile:
     csvWriter = csv.writer(baseFile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
@@ -96,7 +98,7 @@ with open('csvfiles/userfananimal.csv', mode='w') as baseFile:
     		animals.remove(chosenAnimal)
 
     print("Created userfananimal.csv")
-
+'''
 totalentries = 0
 
 #creating csv for table entry
@@ -112,11 +114,36 @@ with open('csvfiles/entry.csv', mode='w') as baseFile:
 
     #random entries for this contest
     nentriesContest = randint(3, int(nentries)+1)
-
+    
     for contest in range(1,int(ncontests)+1):
+        
+        cursor = get_db().execute("SELECT * FROM Contest WHERE ID ='"+str(contest)+"'")
+        result = cursor.fetchone()
+        columns = [column[0] for column in cursor.description] 
+        contestDetails = dict(zip(columns, result))
+        cursor.close()
+
+        #checking dates of contest
+        startdate = contestDetails["start"]
+        enddate = contestDetails["end"]
+        format_str = '%d/%m/%Y' # The format
+        startdate_obj = datetime.strptime(startdate, format_str)
+        enddate_obj = datetime.strptime(enddate, format_str)
+        presentdate = datetime.now()
+
+        ended = False
+        if(enddate_obj < presentdate):
+            ended = True
+
+        awards = ["ムキムキ", "かわいい！", "めっちゃイケメン", "かしこい", "おじさんすぎる動物", "デカすぎ！", "守ってあげたい！弱そう"]
         entriesAnimals = random.sample(range(1,int(nanimals)),nentriesContest)
         for animal in entriesAnimals:
-            csvWriter.writerow([0, datetime.today().strftime('%d/%m/%Y'), contest, animal, "Cute Award"])
+            if(len(awards) > 0 and ended):
+                award = random.choice(awards)
+                awards.remove(award)
+            else:
+                award = ""
+            csvWriter.writerow([0, datetime.today().strftime('%d/%m/%Y'), contest, animal, award])
             totalentries = totalentries +1
     print("Created entry.csv")
 
@@ -156,16 +183,21 @@ with open('csvfiles/post.csv', mode='w') as baseFile:
     next(csv_reader) #skipping header row
             
     picturesData = list(map(tuple, csv_reader))
+
+    descriptions = ["I’ve been taking belly dancing lessons. Do you think I am good?”", "I hope your day is as relaxed as mine ! Enjoying a beautiful day here.", "I am getting ready for Tokyo 2020 olympics, I hope I will get a gold medal !! GANBATTE everyone !", "You are welcome, I know, I am BEAUTIFUL today! :3", "Chilling at home, I can not wait for quarantine to end so I can see all my friends!", "Today I ate soooo much, I feel like I am 200kg fatter >.<'. But the food was good so I have no regrets.", "I NEEEDD A HUGGG, today I miss my friends ! I send you online hugs !", "I like to play everyday, every minute of everyday. What is your favorite game? ", "I made some new friends today, enjoying my animal life. Some friends know how to swim, but I am not so good at swimming", "If you see me i the next contest vote for me !! I am the most handsome animal right? ;) "]
     for row in picturesData:
         cursor = get_db()
         animalID = cursor.execute("SELECT ID FROM Animal WHERE commonName ='"+row[0]+"'").fetchone()
         if(animalID != None):
             for i in range(1, len(row)):
                 if(row[i] != None and row[i] != ""):
-                    csvWriter.writerow([row[i], datetime.today().strftime('%d/%m/%Y'), row[0], animalID[0], 0])
+                    description = random.choice(descriptions)
+                    csvWriter.writerow([row[i], datetime.today().strftime('%d/%m/%Y'), description, animalID[0], 0])
         else:
             print("no animal named "+row[0]+ " found.")
+        cursor.close()
     csvfile.close()
+
     print("Created post.csv")
 
 
