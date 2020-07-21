@@ -308,7 +308,7 @@ def animalContests(animal_id):
 
         #test if contest ended
         if(enddate_obj < presentdate):
-            contest["status"] = "ended"
+            contest["status"] = "past"
         #test it contest is current
         elif(presentdate < enddate_obj and startdate_obj < presentdate):
             contest["status"] = "current"
@@ -480,7 +480,7 @@ def votedContests(user_id):
 
         #test if contest ended
         if(enddate_obj < presentdate):
-            contest["status"] = "ended"
+            contest["status"] = "past"
         #test it contest is current
         elif(presentdate < enddate_obj and startdate_obj < presentdate):
             contest["status"] = "current"
@@ -573,7 +573,7 @@ def contests():
 
         #test if contest ended
         if(enddate_obj < presentdate):
-            contest["status"] = "ended"
+            contest["status"] = "past"
         #test it contest is current
         elif(presentdate < enddate_obj and startdate_obj < presentdate):
             contest["status"] = "current"
@@ -611,7 +611,7 @@ def getContest(contest_id):
 
         #test if contest ended
         if(enddate_obj < presentdate):
-            contest["status"] = "ended"
+            contest["status"] = "past"
         #test it contest is current
         elif(presentdate < enddate_obj and startdate_obj < presentdate):
             contest["status"] = "current"
