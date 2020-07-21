@@ -426,6 +426,8 @@ def vote(contest_id):
 @app.route('/search', methods=['GET'])
 def searchPosts():
     keyword = request.args.get("query", None)
+    page = request.args.get("page", 0)
+    
     response = []
 
     #searching posts by animal name, zoo name, description, animal species 
@@ -434,8 +436,7 @@ def searchPosts():
         a.image_url AS animal_icon_url, p.description, CAST(z.ID AS TEXT) AS zoo_id, z.name AS zoo_name, p.image_url \
         FROM Zoo z, Animal a, Post p \
         WHERE (a.zooID = z.ID AND p.animalID = a.ID) AND \
-        (z.name LIKE '%"+keyword+"%' OR a.name LIKE '%"+keyword+"%' OR a.commonName LIKE '%"+keyword+"%' OR a.species LIKE '%"+keyword+"%' OR p.description LIKE '%"+keyword+"%') \
-        LIMIT 24;")
+        (z.name LIKE '%"+keyword+"%' OR a.name LIKE '%"+keyword+"%' OR a.commonName LIKE '%"+keyword+"%' OR a.species LIKE '%"+keyword+"%' OR p.description LIKE '%"+keyword+"%') LIMIT 24 OFFSET " + str(24*int(page)) + ";")
     
     columns = [column[0] for column in cur.description]
     for row in cur.fetchall():
