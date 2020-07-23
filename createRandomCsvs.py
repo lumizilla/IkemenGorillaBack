@@ -108,12 +108,12 @@ with open('csvfiles/entry.csv', mode='w') as baseFile:
 
     nentries = int(nanimals) + 1;
     while(int(nentries) > int(nanimals)):
-        nentries = input("---> How many maximum entries allowed for a contest? (must be less than total animals)")
+        nentries = input("---> How many maximum entries allowed for a contest? (must be less than total animals and more than 6)")
         if(int(nentries) > int(nanimals)):
             print("entries was more than the total animals")
 
     #random entries for this contest
-    nentriesContest = randint(3, int(nentries)+1)
+    nentriesContest = randint(6, int(nentries)+1)
     
     for contest in range(1,int(ncontests)+1):
         
